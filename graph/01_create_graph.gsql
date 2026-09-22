@@ -1,0 +1,30 @@
+USE GLOBAL
+DROP GRAPH smokeTest CASCADE
+CREATE GRAPH fraudGraph()
+USE GRAPH fraudGraph
+
+CREATE SCHEMA_CHANGE JOB add_vertices FOR GRAPH fraudGraph {
+  ADD VERTEX Customer (customer_id STRING PRIMARY KEY, card1 INT);
+  ADD VERTEX Card (card_id STRING PRIMARY KEY, customer_id STRING, suffix STRING, in_case_pack BOOL, in_closed_history BOOL, in_connected_list BOOL);
+  ADD VERTEX Transaction (transaction_id STRING PRIMARY KEY, transaction_dt INT, ts DATETIME, amount_usd DOUBLE, product_cd STRING, channel STRING, risk_score DOUBLE, customer_id STRING, card1 INT, card4 STRING, card6 STRING, addr1 INT, addr2 INT, is_home_country BOOL, p_emaildomain STRING, r_emaildomain STRING, has_identity BOOL, profile_key STRING);
+  ADD VERTEX DeviceProfile (profile_key STRING PRIMARY KEY, device_info STRING, os STRING, browser STRING, screen STRING, completeness INT);
+  ADD VERTEX BillingRegion (region_code INT PRIMARY KEY);
+  ADD VERTEX EmailDomain (domain STRING PRIMARY KEY);
+  ADD VERTEX ClosedCase (case_id STRING PRIMARY KEY, customer_id STRING, card_id STRING, opened_at DATETIME, closed_at DATETIME, outcome STRING, pattern STRING, first_fraud_txn_id STRING, txn_ids STRING, n_txns INT, exposure_usd DOUBLE, connected_card_ids STRING, actions_taken STRING, report_filed STRING, analyst_notes STRING, txn_amount_sum_usd DOUBLE, exposure_basis STRING, available_from_ts DATETIME);
+}
+RUN SCHEMA_CHANGE JOB add_vertices
+
+CREATE SCHEMA_CHANGE JOB add_edges FOR GRAPH fraudGraph {
+  ADD DIRECTED EDGE MADE (FROM Customer, TO Transaction) WITH REVERSE_EDGE="MADE_BY";
+  ADD DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH REVERSE_EDGE="OWNED_BY";
+  ADD DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile, device_status STRING, proxy_type STRING, match_status STRING, device_type STRING) WITH REVERSE_EDGE="DEVICE_OF";
+  ADD DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH REVERSE_EDGE="BILLING_OF";
+  ADD DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="PURCHASER_OF";
+  ADD DIRECTED EDGE RECIPIENT_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="RECIPIENT_OF";
+  ADD DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction, seq INT, is_first BOOL) WITH REVERSE_EDGE="INVOLVED_IN";
+  ADD DIRECTED EDGE ON_CUSTOMER (FROM ClosedCase, TO Customer) WITH REVERSE_EDGE="HAS_CASE";
+  ADD DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="CARD_CASES";
+  ADD DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="CONNECTED_FROM";
+  ADD DIRECTED EDGE TOUCHES_DEVICE (FROM ClosedCase, TO DeviceProfile, n_txns INT) WITH REVERSE_EDGE="DEVICE_TOUCHED_BY";
+}
+RUN SCHEMA_CHANGE JOB add_edges

@@ -1,0 +1,5 @@
+.env
+.venv/
+data/
+staging/
+__pycache__/

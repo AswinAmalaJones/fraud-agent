@@ -1,0 +1,74 @@
+USE GRAPH fraudGraph
+
+CREATE LOADING JOB load_customers FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX Customer VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_cards FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX Card VALUES ($0, $1, $2, gsql_to_bool($3), gsql_to_bool($4), gsql_to_bool($5)) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_device_profiles FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX DeviceProfile VALUES ($0, $1, $2, $3, $4, $5) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_billing_regions FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX BillingRegion VALUES ($0) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_email_domains FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX EmailDomain VALUES ($0) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_closed_cases FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX ClosedCase VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_transactions FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX Transaction VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, gsql_to_bool($13), $14, $15, gsql_to_bool($16), $17) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_made FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE MADE VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_owns FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE OWNS VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_from_device FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE FROM_DEVICE VALUES ($0, $1, $2, $3, $4, $5) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_billed_in FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE BILLED_IN VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_purchaser_email FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE PURCHASER_EMAIL VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_recipient_email FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE RECIPIENT_EMAIL VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_involves FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE INVOLVES VALUES ($0, $1, $2, gsql_to_bool($3)) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_on_customer FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE ON_CUSTOMER VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_on_card FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE ON_CARD VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_connected_to FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE CONNECTED_TO VALUES ($0, $1) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB load_e_touches_device FOR GRAPH fraudGraph {
+  DEFINE FILENAME f;
+  LOAD f TO EDGE TOUCHES_DEVICE VALUES ($0, $1, $2) USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}

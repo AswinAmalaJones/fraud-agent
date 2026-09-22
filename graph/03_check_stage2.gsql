@@ -1,0 +1,33 @@
+USE GRAPH fraudGraph
+
+INTERPRET QUERY () FOR GRAPH fraudGraph {
+  SumAccum<INT> @@txns_all;
+  SumAccum<INT> @@txns_nov_dec;
+  SetAccum<STRING> @@custs_all;
+  SetAccum<STRING> @@custs_nov_dec;
+  P = {DeviceProfile.*};
+  T1 = SELECT t FROM P:p -(DEVICE_OF>:e)- Transaction:t
+       WHERE p.profile_key == "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+         AND e.proxy_type == "IP_PROXY:ANONYMOUS" AND e.device_status == "New"
+       ACCUM @@txns_all += 1, @@custs_all += t.customer_id;
+  T2 = SELECT t FROM P:p -(DEVICE_OF>:e)- Transaction:t
+       WHERE p.profile_key == "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+         AND e.proxy_type == "IP_PROXY:ANONYMOUS" AND e.device_status == "New"
+         AND t.ts >= to_datetime("2016-11-01 00:00:00")
+       ACCUM @@txns_nov_dec += 1, @@custs_nov_dec += t.customer_id;
+  PRINT @@txns_all, @@custs_all.size(), @@txns_nov_dec, @@custs_nov_dec.size();
+}
+
+INTERPRET QUERY () FOR GRAPH fraudGraph {
+  SumAccum<INT> @@txns;
+  SumAccum<DOUBLE> @@amount;
+  SumAccum<INT> @@connected_cards;
+  C = {ClosedCase.*};
+  T = SELECT t FROM C:c -(INVOLVES>:e)- Transaction:t
+      WHERE c.case_id == "CC-2649"
+      ACCUM @@txns += 1, @@amount += t.amount_usd;
+  K = SELECT k FROM C:c -(CONNECTED_TO>:e2)- Card:k
+      WHERE c.case_id == "CC-2649"
+      ACCUM @@connected_cards += 1;
+  PRINT @@txns, @@amount, @@connected_cards;
+}

@@ -1,0 +1,18 @@
+version: 1
+temporal:
+  ts_authoritative: true
+  lookahead_policy: episode_window
+  discovery_window_days: 30
+  as_of: case_opened_at
+  baseline_cutoff: flagged_txn_ts
+run:
+  scored_run_mode: isolated
+ids:
+  format: bare_dataset_ids
+cards:
+  alias_emission_mode: strict
+embedding:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  dimension: 384
+  metric: cosine
+  text_template_version: cc-v1
