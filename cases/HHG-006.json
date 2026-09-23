@@ -1,18 +1,23 @@
 {
   "case_id": "HHG-006",
   "case": {
-    "status": "closed_legitimate",
-    "verdict": "legitimate",
-    "fraud_probability": 0.0,
-    "pattern": "none",
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.99,
+    "pattern": "card_not_present_fraud",
     "pattern_description": "",
-    "affected_txn_ids": [],
-    "first_suspicious_txn_id": "",
+    "affected_txn_ids": [
+      "3476682",
+      "3476602",
+      "3476633",
+      "3476665"
+    ],
+    "first_suspicious_txn_id": "3476602",
     "connected_card_ids": [],
     "connected_device_profiles": [
       "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
     ],
-    "exposure_usd": 0,
+    "exposure_usd": 1906.07,
     "evidence": [
       {
         "claim": "Flagged amount $482.12 vs. this customer's prior average $116.73 (max $1104.00) over 199 transactions before this alert",
@@ -182,7 +187,32 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer reported not making the $482.12 purchase (txn 3476682).",
+        "claim": "This exact device profile is linked to 6 previously CONFIRMED FRAUD case(s) in the bank's closed-case history (case IDs: CC-0781, CC-1476, CC-1960, CC-3368, CC-3624, CC-5111, pattern(s): account_takeover, card_not_present_fraud, card_not_present_new_device)",
+        "source": "graph",
+        "ref": "tool:device_closed_case_history",
+        "entity_ids": [
+          "CC-0781",
+          "CC-1476",
+          "CC-1960",
+          "CC-3368",
+          "CC-3624",
+          "CC-5111"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes, 2016-11-21 20:00:00 to 2016-11-21 20:24:00. Transaction IDs: 3476602, 3476633, 3476665",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3476602",
+          "3476633",
+          "3476665"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer C07297 reported never making the $482.12 purchase (Refers to 3476682).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -191,7 +221,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $482.12 is higher than customer's prior average of $116.73, but well within the customer's prior maximum of $1104.00.",
+        "claim": "The device profile is linked to 6 previously CONFIRMED FRAUD cases in closed-case history (CC-0781, CC-1476, CC-1960, CC-3368, CC-3624, CC-5111) with patterns including account_takeover, card_not_present_fraud, and card_not_present_new_device.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -200,7 +230,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 28 prior transactions in billing region 264.",
+        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes (Transaction IDs: 3476602, 3476633, 3476665).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -209,55 +239,64 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile was also seen on 139 other customers within +/-30 days of this transaction.",
+        "claim": "Flagged amount $482.12 is higher than the customer's prior average of $116.73, though within their historical max of $1104.00.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
           "3476682"
         ],
         "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "Customer confirms they made this $482.12 purchase themselves.",
-        "source": "customer",
-        "ref": "evidence_request:1",
-        "entity_ids": [],
-        "epistemic_status": "ASSUMPTION"
       }
     ],
-    "similar_prior_cases": [],
-    "summary": "none case on transaction 3476682 (exposure $482.12). Verdict: legitimate (p=0.00).",
+    "similar_prior_cases": [
+      "CC-0781",
+      "CC-1476",
+      "CC-1960",
+      "CC-3368",
+      "CC-3624",
+      "CC-5111"
+    ],
+    "summary": "card_not_present_fraud case on transaction 3476682 plus 3 linked transaction(s) (exposure $1906.07). Verdict: fraud (p=0.99).",
     "written_to_graph": true,
     "graph_case_id": "HHG-006"
   },
-  "evidence_requests": [
-    {
-      "type": "customer_validation",
-      "asked_after_step": 4,
-      "assumed_response": "Customer confirms they made this $482.12 purchase themselves."
-    }
-  ],
+  "evidence_requests": [],
   "next_best_actions": {
     "initial": [
       {
-        "action": "VERIFY_WITH_CUSTOMER",
-        "route": "auto",
-        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R1 satisfied: probability high with 2+ independent signals"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened while evidence is requested"
+        "reason": "3a: case opened for confirmed-strength fraud"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile with other cards"
       }
     ],
     "final": [
       {
-        "action": "CLOSE_NO_FRAUD",
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R1 satisfied: probability high with 2+ independent signals"
+      },
+      {
+        "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "R3: customer confirmed the transaction"
+        "reason": "3a: case opened for confirmed-strength fraud"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device profile with other cards"
       }
     ],
-    "what_changed": "Simulated response (confirmed) changed probability from 0.50 to 0.00."
+    "what_changed": "nothing"
   },
   "sar": {
     "file": false,
@@ -267,8 +306,8 @@
     "total_amount_usd": 0,
     "activity_dates": []
   },
-  "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 7,
-  "tokens": 1680,
-  "latency_s": 5.9
+  "stop_reason": "Stopped: prob_high_2ev.",
+  "tool_calls": 14,
+  "tokens": 1253,
+  "latency_s": 34.2
 }

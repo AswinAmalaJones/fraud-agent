@@ -259,33 +259,40 @@ def burst_scan(conn, customer_id, center_ts, amount_min, amount_max, window_minu
     }
 
 
-if __name__ == "__main__":
-    conn = connect()
-    print("connected")
-    print()
-
-    print("=== get_transaction (HHG-014 flagged txn) ===")
-    print(get_transaction(conn, "3478561"))
-    print()
-
-    print("=== customer_baseline (C13487, cutoff = flagged ts) ===")
-    print(customer_baseline(conn, "C13487", "2016-11-22 16:11:00"))
-    print()
-
-    print("=== region_history (C13487, region 191, cutoff = flagged ts) ===")
-    print(region_history(conn, "C13487", 191, "2016-11-22 16:11:00"))
-    print()
-
-    print("=== device_signature_matches (the Stage 2 Samsung profile, +/-30d around the flagged ts) ===")
-    r = device_signature_matches(
-        conn, DEVICE_PROFILE, "2016-11-22 16:11:00",
-        proxy_type="IP_PROXY:ANONYMOUS", device_status="New",
-    )
-    print({k: v for k, v in r.items() if k != "customer_ids"}, "| n_distinct_customers:", r["n_distinct_customers"])
-    print()
-
-    print("=== burst_scan (C07297 / HHG-006, near-$500 band) ===")
-    r2 = burst_scan(conn, "C07297", "2016-11-21 20:30:00", 400, 500, window_minutes=60)
-    print({k: v for k, v in r2.items() if k != "clusters"})
-    for c in r2["clusters"]:
-        print("  cluster:", c)
+# ---------------------------------------------------------------------------
+# Tool 6 (NEW): has this exact device profile already touched a closed case?
+#          This is what was missing for HHG-006/HHG-014-style cases: a rare
+#          device that appears on a small number of prior CONFIRMED FRAUD
+#          closed cases is much stronger evidence than a raw customer count
+#          (a common device shared by 139 people means nothing; a rare device
+#          shared by a handful of prior fraud cases means a lot).
+# ---------------------------------------------------------------------------
+def device_closed_case_history(conn, profile_key):
+    """Has this exact device profile already touched a confirmed-fraud closed case?"""
+    query = """
+    INTERPRET QUERY (STRING pkey) FOR GRAPH fraudGraph {
+      SumAccum<INT> @@n_confirmed_fraud_cases;
+      SumAccum<INT> @@n_cleared_cases;
+      SetAccum<STRING> @@case_ids;
+      SetAccum<STRING> @@patterns;
+      P = {DeviceProfile.*};
+      C = SELECT c FROM P:p -(DEVICE_TOUCHED_BY>:e)- ClosedCase:c
+          WHERE p.profile_key == pkey
+          ACCUM
+            CASE WHEN c.outcome == "confirmed_fraud" THEN
+              @@n_confirmed_fraud_cases += 1, @@case_ids += c.case_id, @@patterns += c.pattern
+            ELSE
+              @@n_cleared_cases += 1
+            END;
+      PRINT @@n_confirmed_fraud_cases, @@n_cleared_cases, @@case_ids, @@patterns;
+    }
+    """
+    res = conn.runInterpretedQuery(query, params={"pkey": profile_key})
+    row = res[0] if res else {}
+    return {
+        "profile_key": profile_key,
+        "n_confirmed_fraud_cases": row.get("@@n_confirmed_fraud_cases", 0),
+        "n_cleared_cases": row.get("@@n_cleared_cases", 0),
+        "case_ids": sorted(row.get("@@case_ids", [])),
+        "patterns": sorted(row.get("@@patterns", [])),
+    }

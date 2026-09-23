@@ -165,19 +165,6 @@ def r10_allows_block_all_cards(n_customer_cards_confirmed_fraud: int,
     return n_customer_cards_confirmed_fraud >= 2 or credentials_confirmed_compromised
 
 
-# ---------------------------------------------------------------------------
-# Recommended action bundle: one object per action the agent proposes
-# ---------------------------------------------------------------------------
-@dataclass
-class ActionRec:
-    action: str
-    reason: str
-    route: str = field(init=False)
-
-    def __post_init__(self):
-        pass  # route is filled by build_action() below, which knows exposure
-
-
 def build_action(action: str, reason: str, exposure_usd: float = 0.0) -> dict:
     """Build one {action, route, reason} dict with the route computed by policy code."""
     if action not in ACTIONS:
@@ -185,9 +172,6 @@ def build_action(action: str, reason: str, exposure_usd: float = 0.0) -> dict:
     return {"action": action, "route": route_for(action, exposure_usd), "reason": reason}
 
 
-# ---------------------------------------------------------------------------
-# Full check: validate a case's next_best_actions against the policy
-# ---------------------------------------------------------------------------
 def check_actions(actions: list[dict], fraud_probability: float,
                    independent_evidence_count: int, exposure_usd: float) -> list[dict]:
     """
@@ -214,56 +198,6 @@ def check_actions(actions: list[dict], fraud_probability: float,
     return results
 
 
-if __name__ == "__main__":
-    print("=== route_for ===")
-    print("DECLINE_TRANSACTION       ->", route_for("DECLINE_TRANSACTION"))
-    print("BLOCK_CARD, exposure 268  ->", route_for("BLOCK_CARD", 268.43))
-    print("BLOCK_CARD, exposure 3000 ->", route_for("BLOCK_CARD", 3000))
-    print("BLOCK_ALL_CARDS           ->", route_for("BLOCK_ALL_CARDS"))
-    print("FILE_REPORT               ->", route_for("FILE_REPORT"))
-    print("CREATE_CASE               ->", route_for("CREATE_CASE"))
-    print()
-
-    print("=== compute_exposure ===")
-    print(compute_exposure([1.10, 2.40, 0.95, 259.98]), "(expect 264.43)")
-    print()
-
-    print("=== should_file_sar (README worked example: HHG-017-style card testing) ===")
-    inp = SarInputs(
-        fraud_confirmed_or_strong=True,
-        exposure_usd=268.43,
-        shared_device_profile=True,
-        pattern="card_testing",
-    )
-    file, criteria, reason = should_file_sar(inp)
-    print("file:", file, "| criteria:", criteria)
-    print("reason:", reason)
-    print()
-
-    print("=== stop_check ===")
-    print(stop_check(0.86, 2), "(expect stop, prob_high_2ev)")
-    print(stop_check(0.86, 1), "(expect NOT stop -- only 1 independent evidence)")
-    print(stop_check(0.10, 3), "(expect stop, prob_low_2ev)")
-    print(stop_check(0.45, 2), "(expect NOT stop)")
-    print()
-
-    print("=== R1 check ===")
-    print("BLOCK_CARD, prob 0.45, 1 evidence ->", r1_violation("BLOCK_CARD", 0.45, 1), "(expect True: violation)")
-    print("BLOCK_CARD, prob 0.86, 2 evidence ->", r1_violation("BLOCK_CARD", 0.86, 2), "(expect False: ok)")
-    print()
-
-    print("=== check_actions (README worked example, final actions) ===")
-    final_actions = [
-        build_action("BLOCK_CARD", "R2 and R5: customer denied; exposure $268 is under $2,500", 268.43),
-        build_action("CREATE_CASE", "R2", 268.43),
-        build_action("FILE_REPORT", "R2: shared device links this to another compromised card", 268.43),
-        build_action("MONITOR_CONNECTED_CARDS", "Same device profile also used on another card", 268.43),
-    ]
-    for a in final_actions:
-        print(" ", a)
-    checks = check_actions(final_actions, fraud_probability=0.86, independent_evidence_count=2, exposure_usd=268.43)
-    for c in checks:
-        print(" ", c)
 # ---------------------------------------------------------------------------
 # Decision logic: turns an assessment into recommended actions with reasons.
 # This is the ONLY place policy decisions are made. The LLM never decides
@@ -290,7 +224,6 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
     """
     actions: list[dict] = []
 
-    # R5: card testing has its own recommendation, independent of R1.
     if ctx.pattern == "card_testing":
         actions.append(build_action("DECLINE_TRANSACTION",
                                      "R5: card-testing sequence observed on this card"))
@@ -304,19 +237,16 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
             actions.append(build_action("CREATE_CASE", "R5/3a: case opened for a card-testing episode"))
         return actions
 
-    # R9: undocumented + coordinated abuse.
     if ctx.pattern == "undocumented" and ctx.coordinated_abuse:
         actions.append(build_action("CREATE_CASE", "R9: undocumented but coordinated/repeated abuse"))
         actions.append(build_action("FILE_REPORT", "R9: coordinated abuse across customers"))
         actions.append(build_action("ESCALATE_TO_ANALYST", "R9: pattern does not match a known typology"))
         return actions
 
-    # Clearly legitimate: nothing to do beyond letting the transaction stand.
     if ctx.verdict == "legitimate" and ctx.fraud_probability <= STOP_LOW:
         actions.append(build_action("ALLOW_TRANSACTION", "Evidence supports a legitimate transaction"))
         return actions
 
-    # R8: uncertain and material exposure -> escalate.
     if ctx.verdict == "uncertain" and ctx.exposure_usd > ESCALATE_EXPOSURE_THRESHOLD_USD:
         actions.append(build_action("ESCALATE_TO_ANALYST",
                                      f"R8: verdict uncertain and exposure ${ctx.exposure_usd:.2f} > $500"))
@@ -324,7 +254,6 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
             actions.append(build_action("CREATE_CASE", "3a: case opened while escalated"))
         return actions
 
-    # R1: a single signal below 0.70 -> verify first, never block yet.
     if ctx.independent_evidence_count <= 1 and ctx.fraud_probability < R1_PROBABILITY_THRESHOLD:
         actions.append(build_action("VERIFY_WITH_CUSTOMER",
                                      f"R1: probability {ctx.fraud_probability:.2f} on a single signal; "
@@ -333,10 +262,6 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
             actions.append(build_action("CREATE_CASE", "3a: case opened while evidence is requested"))
         return actions
 
-    # Strong evidence already (>=2 independent signals, probability high enough):
-    # go straight to verify/step-up before a hard block, per R1's spirit --
-    # we still confirm with the customer unless probability already clears
-    # the high-stop threshold with 2+ independent signals.
     if ctx.fraud_probability >= STOP_HIGH and ctx.independent_evidence_count >= 2:
         actions.append(build_action("BLOCK_CARD", "R1 satisfied: probability high with 2+ independent signals",
                                      ctx.exposure_usd))
@@ -345,7 +270,6 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
             actions.append(build_action("MONITOR_CONNECTED_CARDS", "R6: shared device profile with other cards"))
         return actions
 
-    # Default middle ground: verify first.
     actions.append(build_action("VERIFY_WITH_CUSTOMER",
                                  f"R1: probability {ctx.fraud_probability:.2f} not yet conclusive; verify first"))
     if should_open_case(ctx.fraud_probability, evidence_requested=True, customer_disputes=False):
@@ -361,12 +285,18 @@ def recommend_final_actions(ctx: DecisionContext, customer_outcome: Optional[str
     actions: list[dict] = []
 
     if customer_outcome == "confirmed" or customer_outcome == "passed":
-        # R3: customer confirms the transaction themselves.
+        # R3: customer confirms THIS transaction themselves. That settles this
+        # one transaction only -- it does NOT clear a device the graph already
+        # shows shared with other cards (R6). A ring can be real even when
+        # this particular cardholder is an innocent, confirmed user of it.
         actions.append(build_action("CLOSE_NO_FRAUD", "R3: customer confirmed the transaction"))
+        if ctx.shared_device:
+            actions.append(build_action("MONITOR_CONNECTED_CARDS",
+                                         "R6: device profile shared with other cards; monitor regardless "
+                                         "of this transaction's individual outcome"))
         return actions
 
     if customer_outcome == "denied" or customer_outcome == "failed":
-        # R2: customer denies / step-up fails -> block and open a case.
         actions.append(build_action("BLOCK_CARD", "R2: customer denied the transaction", ctx.exposure_usd))
         actions.append(build_action("CREATE_CASE", "R2: case opened for confirmed unauthorized activity"))
         sar_inputs = SarInputs(
@@ -386,7 +316,6 @@ def recommend_final_actions(ctx: DecisionContext, customer_outcome: Optional[str
                                          "R6: shared device/region/email links other cards"))
         return actions
 
-    # No reply within the window (R4).
     actions.append(build_action("MONITOR_CARD", "R4: no reply within 24 hours"))
     actions.append(build_action("DECLINE_TRANSACTION", "R4: decline pending authorizations"))
     if ctx.exposure_usd > ESCALATE_EXPOSURE_THRESHOLD_USD:

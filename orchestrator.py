@@ -21,6 +21,17 @@ CHANGE LOG (this pass):
     AGENT_-prefixed edges (see graph/04_add_agentcase.gsql). A failure to
     write to the graph is logged and leaves written_to_graph=False; it does
     NOT fail the whole case (the answer JSON is still written either way).
+  - gather_evidence() now ALSO checks (a) whether the flagged device profile
+    has touched prior CONFIRMED FRAUD closed cases (device_closed_case_history),
+    since a common device shared by many customers is noise but a rare device
+    tied to actual confirmed fraud is strong evidence; and (b) a "structuring"
+    burst scan around the flagged transaction's OWN amount (85%-105% band,
+    above $5 so it never overlaps the card-testing $0-$5 scan), which is what
+    was missing for near-equal-amount bursts like HHG-006's four ~$480 txns.
+  - recommend_final_actions() (policy.py) no longer lets a customer's own
+    confirmation of THEIR transaction silence a shared-device signal: R6
+    monitoring is still recommended when the device is shared, regardless of
+    this one transaction's individual outcome.
 """
 
 import csv
@@ -284,6 +295,7 @@ def gather_evidence(conn, counter, alert):
             })
 
     facts["device"] = None
+    facts["device_history"] = None
     if txn.get("has_identity") and txn.get("profile_key"):
         device = tools.device_signature_matches(conn, txn["profile_key"], cutoff)
         counter.note_tool_call()
@@ -296,11 +308,29 @@ def gather_evidence(conn, counter, alert):
                 "entity_ids": device["customer_ids"], "epistemic_status": "FACT",
             })
 
+        # A common device shared by a huge, generic customer count (e.g. a very
+        # common browser/OS/screen combo) is noise. A device that has touched
+        # actual PRIOR CONFIRMED FRAUD closed cases is strong evidence, no
+        # matter how many total customers happen to share the same combo.
+        history = tools.device_closed_case_history(conn, txn["profile_key"])
+        counter.note_tool_call()
+        facts["device_history"] = history
+        if history["n_confirmed_fraud_cases"] > 0:
+            evidence.append({
+                "claim": f"This exact device profile is linked to {history['n_confirmed_fraud_cases']} "
+                         f"previously CONFIRMED FRAUD case(s) in the bank's closed-case history "
+                         f"(case IDs: {', '.join(history['case_ids'])}, "
+                         f"pattern(s): {', '.join(history['patterns'])})",
+                "source": "graph", "ref": "tool:device_closed_case_history",
+                "entity_ids": history["case_ids"], "epistemic_status": "FACT",
+            })
+
     # Card-testing / multi-transaction detection: scan for clusters of 3+ small
     # (<= $5) authorizations close together in time, +/-30 days of the flagged
     # txn. This is the only place real, additional transaction_ids (beyond the
-    # flagged one) enter the evidence, so affected_txn_ids can ever be more
-    # than a single ID -- and only IDs that appear here are ever trusted later.
+    # flagged one) enter the evidence via the card-testing path, so
+    # affected_txn_ids can ever be more than a single ID here -- and only IDs
+    # that appear in evidence are ever trusted later.
     known_txn_ids = {txn["transaction_id"]}
     burst = tools.burst_scan(conn, customer_id, cutoff, 0.0, 5.0, window_minutes=60)
     counter.note_tool_call()
@@ -315,6 +345,32 @@ def gather_evidence(conn, counter, alert):
             "source": "graph", "ref": "tool:burst_scan",
             "entity_ids": c["transaction_ids"], "epistemic_status": "FACT",
         })
+
+    # Same-size-cluster / structuring detection: a burst of transactions near
+    # the FLAGGED transaction's OWN amount (85%-105% of it), close together in
+    # time. This is what the card-testing $0-$5 scan structurally cannot see
+    # -- e.g. four ~$480 transactions in 30 minutes. Only runs above $5 so it
+    # never overlaps the card-testing scan above.
+    near_band_min = round(txn["amount_usd"] * 0.85, 2)
+    near_band_max = round(txn["amount_usd"] * 1.05, 2)
+    facts["structuring"] = None
+    if near_band_max > 5.0:
+        structuring = tools.burst_scan(conn, customer_id, cutoff, near_band_min, near_band_max, window_minutes=60)
+        counter.note_tool_call()
+        facts["structuring"] = structuring
+        for c in structuring.get("clusters", []):
+            new_ids = set(c["transaction_ids"]) - known_txn_ids
+            if new_ids:
+                known_txn_ids.update(new_ids)
+                evidence.append({
+                    "claim": f"Found {len(c['transaction_ids'])} online transactions of similar size "
+                             f"(${c['total_amount_usd']:.2f} total) within {c['span_minutes']} minutes, "
+                             f"{c['start_ts']} to {c['end_ts']}. Transaction IDs: "
+                             + ", ".join(c["transaction_ids"]),
+                    "source": "graph", "ref": "tool:burst_scan",
+                    "entity_ids": c["transaction_ids"], "epistemic_status": "FACT",
+                })
+
     facts["known_txn_ids"] = known_txn_ids
 
     return evidence, facts
@@ -335,6 +391,9 @@ def run_case(conn, client, alert):
         })
 
     shared_device = bool(facts.get("device") and facts["device"]["n_distinct_customers"] > 1)
+    device_has_prior_fraud = bool(
+        facts.get("device_history") and facts["device_history"]["n_confirmed_fraud_cases"] > 0
+    )
 
     initial_ids, initial_exposure = _validate_and_price_affected_ids(
         conn, counter, txn, assessment.get("affected_txn_ids", []), facts["known_txn_ids"],
@@ -492,7 +551,9 @@ def run_case(conn, client, alert):
             "connected_device_profiles": [txn["profile_key"]] if shared_device else [],
             "exposure_usd": 0 if final_assessment["verdict"] == "legitimate" else final_ctx.exposure_usd,
             "evidence": evidence_objs,
-            "similar_prior_cases": [],
+            "similar_prior_cases": (
+                facts["device_history"]["case_ids"] if device_has_prior_fraud else []
+            ),
             "summary": (
                 f"{display_pattern} "
                 f"case on transaction {txn['transaction_id']}"
@@ -590,3 +651,4 @@ if __name__ == "__main__":
         raise SystemExit("Usage:\n"
                           "  python orchestrator.py            # run all 20 cases\n"
                           "  python orchestrator.py <case_id>  # run one case, e.g. HHG-017")
+    
