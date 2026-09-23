@@ -1,0 +1,122 @@
+{
+  "case_id": "HHG-018",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.85,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3491361"
+    ],
+    "first_suspicious_txn_id": "3491361",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 39.08,
+    "evidence": [
+      {
+        "claim": "Flagged amount $39.08 vs. this customer's prior average $141.23 (max $4438.01) over 5864 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C02354",
+          "3491361"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer has 565 prior transactions in billing region 126, first seen 2016-07-02 14:10:52",
+        "source": "graph",
+        "ref": "tool:region_history",
+        "entity_ids": [
+          "C02354"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer C02354 reported they never made the $39.08 purchase (txn 3491361).",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3491361"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Flagged amount $39.08 is significantly lower than the customer's prior average of $141.23.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3491361"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer has an extensive history of 5864 transactions (565 in billing region 126 since 2016).",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3491361"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $39.08 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "card_not_present_fraud case on transaction 3491361 (exposure $39.08). Verdict: fraud (p=0.85).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-018"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make this $39.08 transaction and still has the card in their possession."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while evidence is requested"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      }
+    ],
+    "what_changed": "Simulated response (denied) changed probability from 0.50 to 0.85."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a: FILE_REPORT not recommended",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 6,
+  "tokens": 1781,
+  "latency_s": 6.1
+}

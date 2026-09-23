@@ -1,0 +1,208 @@
+{
+  "case_id": "HHG-016",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.85,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3534820"
+    ],
+    "first_suspicious_txn_id": "3534820",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Windows |  | edge 16.0 | "
+    ],
+    "exposure_usd": 59.67,
+    "evidence": [
+      {
+        "claim": "Flagged amount $59.67 vs. this customer's prior average $39.80 (max $94.70) over 48 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C09988",
+          "3534820"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 69 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C00045",
+          "C00294",
+          "C00854",
+          "C01002",
+          "C01109",
+          "C01351",
+          "C01521",
+          "C01525",
+          "C02181",
+          "C02545",
+          "C02782",
+          "C03047",
+          "C03488",
+          "C04004",
+          "C04021",
+          "C04034",
+          "C04058",
+          "C04386",
+          "C04597",
+          "C04965",
+          "C05031",
+          "C05307",
+          "C05381",
+          "C05630",
+          "C05638",
+          "C05793",
+          "C06224",
+          "C06464",
+          "C06630",
+          "C06744",
+          "C07187",
+          "C07196",
+          "C07438",
+          "C07508",
+          "C07562",
+          "C07981",
+          "C08106",
+          "C08281",
+          "C08374",
+          "C08391",
+          "C08610",
+          "C08962",
+          "C09241",
+          "C09246",
+          "C09251",
+          "C09363",
+          "C09365",
+          "C09533",
+          "C09616",
+          "C09657",
+          "C09940",
+          "C09988",
+          "C10131",
+          "C10644",
+          "C11509",
+          "C11597",
+          "C11799",
+          "C11919",
+          "C11923",
+          "C11995",
+          "C12028",
+          "C12098",
+          "C12212",
+          "C12340",
+          "C12645",
+          "C12987",
+          "C13166",
+          "C13171",
+          "C13407",
+          "C13447"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer reported not making the $59.67 purchase (Refers to 3534820)",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3534820"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Flagged amount $59.67 is within the customer's prior range (average $39.80, max $94.70 over 48 transactions)",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3534820"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile also seen on 69 other customers within +/-30 days",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3534820"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $59.67 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "card_not_present_new_device case on transaction 3534820 (exposure $59.67). Verdict: fraud (p=0.85).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-016"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 3,
+      "assumed_response": "Customer states they did not make this $59.67 transaction and still has the card in their possession."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while evidence is requested"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device/region/email links other cards"
+      }
+    ],
+    "what_changed": "Simulated response (denied) changed probability from 0.50 to 0.85."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile",
+    "narrative": "On 2016-12-11, customer C09988 was affected by a $59.67 card_not_present_new_device transaction (ID 3534820). Simulated customer contact recorded: Customer states they did not make this $59.67 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C09988"
+    ],
+    "total_amount_usd": 59.67,
+    "activity_dates": [
+      "2016-12-11",
+      "2016-12-11"
+    ]
+  },
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 6,
+  "tokens": 1697,
+  "latency_s": 6.8
+}

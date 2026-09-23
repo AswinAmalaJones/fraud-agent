@@ -1,0 +1,274 @@
+{
+  "case_id": "HHG-006",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.0,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
+    ],
+    "exposure_usd": 0,
+    "evidence": [
+      {
+        "claim": "Flagged amount $482.12 vs. this customer's prior average $116.73 (max $1104.00) over 199 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C07297",
+          "3476682"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer has 28 prior transactions in billing region 264, first seen 2016-07-06 00:29:46",
+        "source": "graph",
+        "ref": "tool:region_history",
+        "entity_ids": [
+          "C07297"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 139 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C00288",
+          "C00502",
+          "C00537",
+          "C00555",
+          "C00679",
+          "C00750",
+          "C00854",
+          "C00941",
+          "C01104",
+          "C01109",
+          "C01116",
+          "C01144",
+          "C01155",
+          "C01165",
+          "C01196",
+          "C01255",
+          "C01374",
+          "C01721",
+          "C01744",
+          "C01864",
+          "C01982",
+          "C02079",
+          "C02231",
+          "C02279",
+          "C02285",
+          "C02354",
+          "C02360",
+          "C02458",
+          "C02716",
+          "C02859",
+          "C03040",
+          "C03047",
+          "C03066",
+          "C03125",
+          "C03215",
+          "C03218",
+          "C03247",
+          "C03278",
+          "C03474",
+          "C03538",
+          "C03838",
+          "C03856",
+          "C03983",
+          "C04108",
+          "C04571",
+          "C04592",
+          "C04759",
+          "C04778",
+          "C04965",
+          "C05052",
+          "C05146",
+          "C05244",
+          "C05245",
+          "C05509",
+          "C05560",
+          "C05690",
+          "C05704",
+          "C05809",
+          "C05848",
+          "C05868",
+          "C05891",
+          "C06001",
+          "C06005",
+          "C06026",
+          "C06092",
+          "C06201",
+          "C06208",
+          "C06220",
+          "C06224",
+          "C06800",
+          "C06958",
+          "C06976",
+          "C07102",
+          "C07119",
+          "C07171",
+          "C07212",
+          "C07297",
+          "C07356",
+          "C07437",
+          "C07585",
+          "C07612",
+          "C07614",
+          "C07648",
+          "C07867",
+          "C08450",
+          "C08482",
+          "C08496",
+          "C08791",
+          "C08796",
+          "C08833",
+          "C08918",
+          "C08945",
+          "C08989",
+          "C09026",
+          "C09241",
+          "C09249",
+          "C09274",
+          "C09301",
+          "C09363",
+          "C09420",
+          "C09442",
+          "C09443",
+          "C09468",
+          "C09602",
+          "C09681",
+          "C09800",
+          "C09826",
+          "C09956",
+          "C10194",
+          "C10349",
+          "C10448",
+          "C10601",
+          "C10713",
+          "C10755",
+          "C10842",
+          "C11000",
+          "C11193",
+          "C11294",
+          "C11298",
+          "C11309",
+          "C11381",
+          "C11385",
+          "C11513",
+          "C11539",
+          "C11865",
+          "C12150",
+          "C12166",
+          "C12532",
+          "C12592",
+          "C12658",
+          "C12690",
+          "C12755",
+          "C12762",
+          "C12840",
+          "C12842",
+          "C12942",
+          "C12983",
+          "C13067",
+          "C13086",
+          "C13264"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer reported not making the $482.12 purchase (txn 3476682).",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Flagged amount $482.12 is higher than customer's prior average of $116.73, but well within the customer's prior maximum of $1104.00.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer has 28 prior transactions in billing region 264.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile was also seen on 139 other customers within +/-30 days of this transaction.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer confirms they made this $482.12 purchase themselves.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "none case on transaction 3476682 (exposure $482.12). Verdict: legitimate (p=0.00).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-006"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 4,
+      "assumed_response": "Customer confirms they made this $482.12 purchase themselves."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while evidence is requested"
+      }
+    ],
+    "final": [
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: customer confirmed the transaction"
+      }
+    ],
+    "what_changed": "Simulated response (confirmed) changed probability from 0.50 to 0.00."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a: FILE_REPORT not recommended",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 7,
+  "tokens": 1680,
+  "latency_s": 5.9
+}

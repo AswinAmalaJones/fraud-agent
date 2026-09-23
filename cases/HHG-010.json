@@ -1,0 +1,176 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.7,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3506725"
+    ],
+    "first_suspicious_txn_id": "3506725",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "exposure_usd": 1000.03,
+    "evidence": [
+      {
+        "claim": "Flagged amount $1000.03 vs. this customer's prior average $131.25 (max $670.04) over 33 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C10434",
+          "3506725"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer has 24 prior transactions in billing region 469, first seen 2016-07-06 23:54:46",
+        "source": "graph",
+        "ref": "tool:region_history",
+        "entity_ids": [
+          "C10434"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 65 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C00750",
+          "C00854",
+          "C01688",
+          "C01999",
+          "C02079",
+          "C02231",
+          "C02250",
+          "C02280",
+          "C02285",
+          "C02377",
+          "C02716",
+          "C02848",
+          "C03036",
+          "C03066",
+          "C03169",
+          "C03218",
+          "C03285",
+          "C03343",
+          "C03533",
+          "C03714",
+          "C03738",
+          "C04024",
+          "C04108",
+          "C04190",
+          "C04265",
+          "C04269",
+          "C04860",
+          "C05244",
+          "C05508",
+          "C05625",
+          "C05814",
+          "C06070",
+          "C06224",
+          "C06308",
+          "C06818",
+          "C06914",
+          "C07185",
+          "C07212",
+          "C07338",
+          "C07518",
+          "C07552",
+          "C07745",
+          "C07780",
+          "C07925",
+          "C08269",
+          "C08489",
+          "C08918",
+          "C08989",
+          "C09065",
+          "C09165",
+          "C09241",
+          "C09249",
+          "C09363",
+          "C10149",
+          "C10308",
+          "C10434",
+          "C10507",
+          "C11000",
+          "C11143",
+          "C11309",
+          "C11381",
+          "C11709",
+          "C11929",
+          "C12690",
+          "C12897",
+          "C12961"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Flagged amount $1,000.03 significantly exceeds the customer's prior average of $131.25 and prior maximum of $670.04.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile was also seen on 65 other customers within +/-30 days of this transaction.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "card_not_present_new_device case on transaction 3506725 (exposure $1000.03). Verdict: uncertain (p=0.70).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-010"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $1000.03 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
+      }
+    ],
+    "final": [
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $1000.03 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a: FILE_REPORT not recommended",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped after the single evidence request; further steps unlikely to change the decision.",
+  "tool_calls": 6,
+  "tokens": 841,
+  "latency_s": 4.4
+}

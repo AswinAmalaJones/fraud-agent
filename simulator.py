@@ -6,11 +6,11 @@ simulate the response in your own system and record what you assumed
 in evidence_requests."
 
 Design rules (Stage 3):
-  - Every reply is DETERMINISTIC: the same request, run twice, gives the
+- Every reply is DETERMINISTIC: the same request, run twice, gives the
     same reply. We use a seed derived from the case_id and step number,
     never Python's global random state.
-  - Every reply is explicitly marked is_simulated = True.
-  - The simulator NEVER invents facts that aren't already in the evidence
+- Every reply is explicitly marked is_simulated = True.
+- The simulator NEVER invents facts that aren't already in the evidence
     passed to it (e.g. it will not claim "I was travelling" out of nowhere;
     it only confirms/denies based on the probability the agent itself computed).
 """
@@ -27,7 +27,7 @@ def _seeded_rng(case_id: str, step_no: int, request_type: str) -> random.Random:
 
 
 def simulate_customer_validation(case_id: str, step_no: int, fraud_probability: float,
-                                  amount_usd: float, is_home_region: bool = True) -> dict:
+                                amount_usd: float, is_home_region: bool = True) -> dict:
     """
     Simulate a customer's answer to "did you make this transaction?"
 
