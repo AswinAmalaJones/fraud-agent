@@ -1,138 +1,148 @@
 """
-Deterministic reply simulator for the fraud investigation agent.
+Deterministic simulator for customer and analyst replies.
+The README states: "Customer and analyst replies are not provided.
+If your agent asks the customer or requests step-up authentication,
+simulate the response in your own system and record what you assumed
+in evidence_requests."
 
-README, "Things to know" and Policy section 5 ("Gathering more evidence"):
-"Customer and analyst replies are not provided... simulate the response
-in your own system and record what you assumed in evidence_requests."
-
-Answer Format (Top level) requires evidence_requests entries shaped exactly:
-  type             : "customer_validation" | "step_up_auth" | "analyst_info"
-  asked_after_step : int   (the caller/agent fills this in -- it depends on
-                             the agent's own tool-call sequence, which this
-                             module has no visibility into)
-  assumed_response : string
-
-Design constraints this module satisfies:
-  - Deterministic: same case_id + same prior probability -> same reply,
-    every run. No `random.seed()`, no global random state.
-  - Isolated from ground truth: takes only case_id and the agent's own
-    prior fraud_probability as input. Never reads closed_cases_history.csv
-    or any real outcome. A simulated reply cannot leak the answer key.
-  - Never silently passed off as real: the caller is expected to record it
-    under evidence_requests.assumed_response and cite it as source="customer"
-    in the case evidence list, exactly as the README's own worked example
-    does -- nothing here hides that this was fabricated.
-
-Calibration check against the README's own worked example (HHG-017):
-  prior probability 0.72, VERIFY_WITH_CUSTOMER, customer denies
-  -> "Customer denial raised probability from 0.72 to 0.86"
-  0.72 + DENY_BUMP(0.14) == 0.86  -- matches exactly.
+Design rules (Stage 3):
+  - Every reply is DETERMINISTIC: the same request, run twice, gives the
+    same reply. We use a seed derived from the case_id and step number,
+    never Python's global random state.
+  - Every reply is explicitly marked is_simulated = True.
+  - The simulator NEVER invents facts that aren't already in the evidence
+    passed to it (e.g. it will not claim "I was travelling" out of nowhere;
+    it only confirms/denies based on the probability the agent itself computed).
 """
 
 import hashlib
-
-DENY_BUMP = 0.14      # customer denies / step-up fails -> probability moves toward 1
-CONFIRM_DROP = 0.14   # customer confirms / step-up passes -> probability moves toward 0
-AMBIGUOUS_LOW, AMBIGUOUS_HIGH = 0.30, 0.70
+import random
 
 
-def _seeded_bit(case_id: str, kind: str) -> float:
+def _seeded_rng(case_id: str, step_no: int, request_type: str) -> random.Random:
+    """A private, reproducible random source. Does not touch global random state."""
+    key = f"{case_id}|{step_no}|{request_type}"
+    digest = hashlib.sha256(key.encode()).hexdigest()
+    return random.Random(int(digest[:16], 16))
+
+
+def simulate_customer_validation(case_id: str, step_no: int, fraud_probability: float,
+                                  amount_usd: float, is_home_region: bool = True) -> dict:
     """
-    Deterministic pseudo-random float in [0, 1), stable for a given
-    (case_id, kind) pair. No use of Python's `random` module and no global
-    seed state -- same input always produces the same output.
+    Simulate a customer's answer to "did you make this transaction?"
+
+    Policy: this is where R1/R2/R3 branch. A higher fraud_probability makes a
+    denial more likely; a lower one makes confirmation more likely. The
+    boundary sits at 0.5 with a little seeded noise, so borderline cases
+    aren't always resolved the same way in fiction -- but ARE always the
+    same way for the same case_id/step, because the RNG is seeded.
     """
-    h = hashlib.sha256(f"{case_id}:{kind}".encode()).hexdigest()
-    return int(h[:8], 16) / 0xFFFFFFFF
-
-
-def _settled(prob: float) -> bool:
-    """Matches Policy section 6 stop thresholds: >=0.85 or <=0.15."""
-    return prob >= 0.85 or prob <= 0.15
-
-
-def simulate_customer_validation(case_id: str, prior_fraud_probability: float):
-    """
-    Policy R2/R3. Customer either denies the transaction (probability moves
-    toward fraud) or confirms it (probability moves toward legitimate).
-    Returns (assumed_response: str, new_fraud_probability: float, settled: bool).
-    """
-    if prior_fraud_probability >= AMBIGUOUS_HIGH:
-        denies = True
-    elif prior_fraud_probability <= AMBIGUOUS_LOW:
-        denies = False
-    else:
-        denies = _seeded_bit(case_id, "customer_validation") < prior_fraud_probability
+    rng = _seeded_rng(case_id, step_no, "customer_validation")
+    denies = rng.random() < fraud_probability
 
     if denies:
-        text = "Customer states they did not make this purchase and still has the card."
-        new_prob = min(1.0, round(prior_fraud_probability + DENY_BUMP, 2))
+        response = (
+            f"Customer states they did not make this ${amount_usd:.2f} transaction "
+            "and still has the card in their possession."
+        )
+        outcome = "denied"
     else:
-        text = "Customer confirms they made this purchase."
-        new_prob = max(0.0, round(prior_fraud_probability - CONFIRM_DROP, 2))
+        if is_home_region:
+            response = (
+                f"Customer confirms they made this ${amount_usd:.2f} purchase themselves."
+            )
+        else:
+            response = (
+                f"Customer confirms travel to the billing region and made this "
+                f"${amount_usd:.2f} purchase themselves."
+            )
+        outcome = "confirmed"
 
-    return text, new_prob, _settled(new_prob)
+    return {
+        "type": "customer_validation",
+        "asked_after_step": step_no,
+        "assumed_response": response,
+        "is_simulated": True,
+        "outcome": outcome,  # "denied" | "confirmed" -- used by the orchestrator, not emitted
+    }
 
 
-def simulate_step_up_auth(case_id: str, prior_fraud_probability: float):
+def simulate_step_up_auth(case_id: str, step_no: int, fraud_probability: float) -> dict:
     """
-    STEP_UP_AUTH: one-time passcode / app confirmation. Passing it is strong
-    evidence the legitimate cardholder is present; failing it is strong
-    evidence they are not.
+    Simulate the result of asking for a one-time passcode / app confirmation.
+    A genuine cardholder almost always passes step-up; a compromised session
+    almost always fails it. We tie the pass rate to (1 - fraud_probability).
     """
-    passed = _seeded_bit(case_id, "step_up_auth") >= prior_fraud_probability
+    rng = _seeded_rng(case_id, step_no, "step_up_auth")
+    passed = rng.random() > fraud_probability
+
     if passed:
-        text = "Step-up authentication passed; cardholder confirmed via one-time passcode."
-        new_prob = max(0.0, round(prior_fraud_probability - CONFIRM_DROP, 2))
+        response = "Step-up authentication (one-time passcode) was completed successfully."
+        outcome = "passed"
     else:
-        text = "Step-up authentication failed; no confirmation received."
-        new_prob = min(1.0, round(prior_fraud_probability + DENY_BUMP, 2))
+        response = "Step-up authentication failed: no valid response to the one-time passcode."
+        outcome = "failed"
 
-    return text, new_prob, _settled(new_prob)
+    return {
+        "type": "step_up_auth",
+        "asked_after_step": step_no,
+        "assumed_response": response,
+        "is_simulated": True,
+        "outcome": outcome,
+    }
 
 
-def simulate_analyst_info(case_id: str, prior_fraud_probability: float):
+def simulate_analyst_info(case_id: str, step_no: int, context_note: str) -> dict:
     """
-    ESCALATE_TO_ANALYST / analyst_info ask: a human analyst weighs in with
-    context the graph alone doesn't have. Smaller movement than a direct
-    cardholder reply -- informative, not decisive on its own.
+    Simulate an analyst providing extra context they have access to but the
+    graph does not (e.g. a linked case elsewhere, a known merchant issue).
+    This one does NOT invent new facts: it only echoes back context_note,
+    which the caller must supply from evidence already gathered.
     """
-    bit = _seeded_bit(case_id, "analyst_info")
-    if bit < prior_fraud_probability:
-        text = "Analyst review: pattern is consistent with prior confirmed-fraud cases."
-        new_prob = min(1.0, round(prior_fraud_probability + DENY_BUMP / 2, 2))
-    else:
-        text = "Analyst review: no additional red flags found beyond the risk score."
-        new_prob = max(0.0, round(prior_fraud_probability - CONFIRM_DROP / 2, 2))
-
-    return text, new_prob, _settled(new_prob)
+    response = f"Analyst confirms: {context_note}"
+    return {
+        "type": "analyst_info",
+        "asked_after_step": step_no,
+        "assumed_response": response,
+        "is_simulated": True,
+        "outcome": "info_provided",
+    }
 
 
 if __name__ == "__main__":
-    print("=== simulate_customer_validation ===")
-    for prob in [0.90, 0.72, 0.50, 0.28, 0.05]:
-        text, new_prob, settled = simulate_customer_validation("HHG-017", prob)
-        print(f"  prior={prob:<5} -> new={new_prob:<5} settled={settled}  \"{text}\"")
+    print("=== determinism check: same inputs must give the same reply, every time ===")
+    r1 = simulate_customer_validation("HHG-006", 3, fraud_probability=0.75, amount_usd=482.12)
+    r2 = simulate_customer_validation("HHG-006", 3, fraud_probability=0.75, amount_usd=482.12)
+    print("run 1:", r1)
+    print("run 2:", r2)
+    print("identical:", r1 == r2, "(expect True)")
     print()
 
-    print("=== README calibration check (HHG-017: 0.72 -> 0.86 on denial) ===")
-    text, new_prob, settled = simulate_customer_validation("HHG-017", 0.72)
-    print(f"  new_prob={new_prob} (expect 0.86)  match:", new_prob == 0.86)
+    print("=== a different step number must be free to give a different outcome ===")
+    r3 = simulate_customer_validation("HHG-006", 7, fraud_probability=0.75, amount_usd=482.12)
+    print("step 3:", r1["outcome"], "| step 7:", r3["outcome"])
     print()
 
-    print("=== determinism check (same case, same prior prob, run twice) ===")
-    r1 = simulate_customer_validation("HHG-CASE-XYZ", 0.55)
-    r2 = simulate_customer_validation("HHG-CASE-XYZ", 0.55)
-    print("  run 1:", r1)
-    print("  run 2:", r2)
-    print("  identical:", r1 == r2, "(expect True)")
+    print("=== high probability tends toward denial, low probability toward confirmation ===")
+    denies = sum(
+        simulate_customer_validation(f"TEST-{i}", 1, fraud_probability=0.9, amount_usd=100.0)["outcome"] == "denied"
+        for i in range(200)
+    )
+    confirms = sum(
+        simulate_customer_validation(f"TEST-{i}", 1, fraud_probability=0.1, amount_usd=100.0)["outcome"] == "confirmed"
+        for i in range(200)
+    )
+    print(f"prob=0.9: denied in {denies}/200 cases (expect close to 180)")
+    print(f"prob=0.1: confirmed in {confirms}/200 cases (expect close to 180)")
     print()
 
-    print("=== simulate_step_up_auth ===")
-    for prob in [0.80, 0.50, 0.20]:
-        print(f"  prior={prob} ->", simulate_step_up_auth("HHG-014", prob))
+    print("=== step_up_auth ===")
+    print(simulate_step_up_auth("HHG-010", 2, fraud_probability=0.85))
+    print(simulate_step_up_auth("HHG-020", 2, fraud_probability=0.20))
     print()
 
-    print("=== simulate_analyst_info ===")
-    for prob in [0.60, 0.35]:
-        print(f"  prior={prob} ->", simulate_analyst_info("HHG-014", prob))
+    print("=== analyst_info ===")
+    print(simulate_analyst_info(
+        "HHG-014", 5,
+        "two other cardholders reported the same device profile this month"
+    ))
