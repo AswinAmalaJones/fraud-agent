@@ -121,7 +121,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount $125.08 is below the customer's prior average of $216.74.",
+        "claim": "Flagged amount $125.08 is below the customer's prior average of $216.74",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -130,7 +130,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Transaction is online (card-not-present).",
+        "claim": "Customer has 83 prior transactions in billing region 264 since 2016",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -139,7 +139,16 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile was also seen on 78 other customers within +/-30 days of this transaction.",
+        "claim": "Device profile also seen on 78 other customers within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3509359"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Real-time model scored the online transaction at 0.52",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -204,6 +213,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 9,
-  "tokens": 1615,
-  "latency_s": 15.3
+  "tokens": 1756,
+  "latency_s": 7.4
 }

@@ -3,4 +3,6 @@
 data/
 staging/
 __pycache__/
-.vercel
+.vercel/
+frontend/node_modules/
+frontend/dist/

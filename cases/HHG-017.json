@@ -3,15 +3,15 @@
   "case": {
     "status": "closed_fraud",
     "verdict": "fraud",
-    "fraud_probability": 0.95,
+    "fraud_probability": 0.99,
     "pattern": "card_not_present_fraud",
     "pattern_description": "",
     "affected_txn_ids": [
-      "3450629",
+      "3450436",
       "3450503",
-      "3403833"
+      "3450629"
     ],
-    "first_suspicious_txn_id": "3403833",
+    "first_suspicious_txn_id": "3450436",
     "connected_card_ids": [
       "C02180-K1",
       "C02975-K1",
@@ -24,7 +24,7 @@
     "connected_device_profiles": [
       "Windows | Windows 10 | chrome 65.0 | 1920x1080"
     ],
-    "exposure_usd": 299.99,
+    "exposure_usd": 300.14,
     "evidence": [
       {
         "claim": "Flagged amount $100.09 vs. this customer's prior average $360.18 (max $2892.12) over 52 transactions before this alert",
@@ -366,18 +366,18 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($299.99 total) within -21734.0 minutes, 2016-11-11 23:46:24 to 2016-10-27 21:32:25. Transaction IDs: 3450629, 3450503, 3403833",
+        "claim": "Found 3 online transactions of similar size ($300.14 total) within 69.6 minutes, 2016-11-11 22:36:50 to 2016-11-11 23:46:24. Transaction IDs: 3450436, 3450503, 3450629",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
-          "3450629",
+          "3450436",
           "3450503",
-          "3403833"
+          "3450629"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "The exact device profile is linked to 7 previously CONFIRMED FRAUD cases in the bank's closed-case history.",
+        "claim": "Flagged transaction amount of $100.09 is lower than the customer's prior average of $360.18",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -386,7 +386,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The device profile has also been seen on 296 other customers within +/-30 days of this transaction.",
+        "claim": "Device profile has been seen on 296 other customers within +/-30 days",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -395,7 +395,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Found 3 online transactions of similar size totaling $299.99 within a specified timeframe.",
+        "claim": "Device profile is linked to 7 previously confirmed fraud cases in closed-case history with patterns card_not_present_fraud and card_not_present_new_device",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -404,7 +404,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount is $100.09 compared to the customer's prior average of $360.18.",
+        "claim": "Found 3 online transactions of similar size totaling $300.14 within 69.6 minutes on 2016-11-11",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -429,7 +429,7 @@
       "CC-5455",
       "CC-5481"
     ],
-    "summary": "card_not_present_fraud case on transaction 3450629 plus 2 linked transaction(s) (exposure $299.99). Verdict: fraud (p=0.95).",
+    "summary": "card_not_present_fraud case on transaction 3450629 plus 2 linked transaction(s) (exposure $300.14). Verdict: fraud (p=0.99).",
     "written_to_graph": true,
     "graph_case_id": "HHG-017"
   },
@@ -475,16 +475,16 @@
         "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.95."
+    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.99."
   },
   "sar": {
     "file": true,
     "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile",
-    "narrative": "On 2016-11-11, customer C04570 was affected by a card_not_present_fraud episode totaling $299.99 across 3 linked transactions (IDs: 3450629, 3450503, 3403833). Simulated customer contact recorded: Customer states they did not make this $100.09 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "narrative": "On 2016-11-11, customer C04570 was affected by a card_not_present_fraud episode totaling $300.14 across 3 linked transactions (IDs: 3450436, 3450503, 3450629). Simulated customer contact recorded: Customer states they did not make this $100.09 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
     "subjects": [
       "C04570"
     ],
-    "total_amount_usd": 299.99,
+    "total_amount_usd": 300.14,
     "activity_dates": [
       "2016-11-11",
       "2016-11-11"
@@ -492,6 +492,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 13,
-  "tokens": 2285,
-  "latency_s": 15.8
+  "tokens": 2327,
+  "latency_s": 8.6
 }

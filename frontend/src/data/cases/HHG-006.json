@@ -7,10 +7,10 @@
     "pattern": "card_not_present_fraud",
     "pattern_description": "",
     "affected_txn_ids": [
-      "3476682",
       "3476602",
       "3476633",
-      "3476665"
+      "3476665",
+      "3476682"
     ],
     "first_suspicious_txn_id": "3476602",
     "connected_card_ids": [
@@ -208,18 +208,19 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes, 2016-11-21 20:00:00 to 2016-11-21 20:24:00. Transaction IDs: 3476602, 3476633, 3476665",
+        "claim": "Found 4 online transactions of similar size ($1906.07 total) within 30.0 minutes, 2016-11-21 20:00:00 to 2016-11-21 20:30:00. Transaction IDs: 3476602, 3476633, 3476665, 3476682",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
           "3476602",
           "3476633",
-          "3476665"
+          "3476665",
+          "3476682"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer C07297 reported never making the $482.12 purchase (txn 3476682).",
+        "claim": "Customer C07297 reported never making the $482.12 purchase.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -228,7 +229,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The device profile is linked to 6 previously CONFIRMED FRAUD cases involving account takeover, card not present fraud, and card not present new device.",
+        "claim": "Device profile is linked to 6 previously CONFIRMED FRAUD cases in the bank's closed-case history.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -237,7 +238,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24 minutes (txns 3476602, 3476633, 3476665) around the time of the flagged transaction.",
+        "claim": "Found 4 online transactions of similar size ($1906.07 total) within 30.0 minutes from 2016-11-21 20:00:00 to 2016-11-21 20:30:00.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -246,7 +247,16 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The flagged amount of $482.12 is higher than the customer's prior average of $116.73, though within their historical max of $1104.00.",
+        "claim": "Flagged amount $482.12 is higher than the customer's prior average of $116.73, though within the prior max of $1104.00.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile also seen on 139 other customers within +/-30 days of this transaction.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -321,7 +331,7 @@
   "sar": {
     "file": true,
     "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile",
-    "narrative": "On 2016-11-21, customer C07297 was affected by a card_not_present_fraud episode totaling $1906.07 across 4 linked transactions (IDs: 3476682, 3476602, 3476633, 3476665). Simulated customer contact recorded: Customer states they did not make this $482.12 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "narrative": "On 2016-11-21, customer C07297 was affected by a card_not_present_fraud episode totaling $1906.07 across 4 linked transactions (IDs: 3476602, 3476633, 3476665, 3476682). Simulated customer contact recorded: Customer states they did not make this $482.12 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
     "subjects": [
       "C07297"
     ],
@@ -333,6 +343,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 15,
-  "tokens": 2473,
-  "latency_s": 13.7
+  "tokens": 2445,
+  "latency_s": 70.4
 }

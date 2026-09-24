@@ -222,6 +222,13 @@ def burst_scan(conn, customer_id, center_ts, amount_min, amount_max, window_minu
     tss = row.get("@@txn_ts", [])
     amts = row.get("@@txn_amt", [])
 
+    # GSQL's ORDER BY on an ACCUM clause does not guarantee the order in
+    # which ListAccum values are appended (matching rows are processed in
+    # parallel). Never trust list order from the graph for anything
+    # time-sensitive: re-sort here, in Python, before clustering.
+    if ids:
+        triples = sorted(zip(tss, ids, amts), key=lambda x: _parse(x[0]))
+        tss, ids, amts = (list(t) for t in zip(*triples))
     # find clusters where consecutive transactions are within window_minutes of each other
     clusters = []
     current = []

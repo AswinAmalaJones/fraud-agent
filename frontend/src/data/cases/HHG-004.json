@@ -23,7 +23,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer reported the $128.33 purchase as unauthorized.",
+        "claim": "Customer C08106 reported never making the $128.33 purchase (txn 3583227).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -32,7 +32,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount of $128.33 is higher than the customer's prior average of $35.31.",
+        "claim": "The flagged amount of $128.33 is higher than the customer's prior average of $35.31.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -41,7 +41,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount of $128.33 is within the customer's prior maximum of $138.89.",
+        "claim": "The flagged amount of $128.33 is within the customer's prior maximum of $138.89 over 209 transactions.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -101,6 +101,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 8,
-  "tokens": 1575,
-  "latency_s": 15.0
+  "tokens": 1555,
+  "latency_s": 5.8
 }

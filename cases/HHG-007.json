@@ -1,16 +1,39 @@
 {
   "case_id": "HHG-007",
   "case": {
-    "status": "closed_legitimate",
-    "verdict": "legitimate",
-    "fraud_probability": 0.1,
-    "pattern": "none",
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.5,
+    "pattern": "card_not_present_fraud",
     "pattern_description": "",
-    "affected_txn_ids": [],
-    "first_suspicious_txn_id": "",
+    "affected_txn_ids": [
+      "3514948",
+      "3455711",
+      "3455761",
+      "3455838",
+      "3455893",
+      "3469803",
+      "3469877",
+      "3469920",
+      "3469923",
+      "3506216",
+      "3506241",
+      "3506256",
+      "3520279",
+      "3520344",
+      "3520430",
+      "3561250",
+      "3561352",
+      "3561400",
+      "3575345",
+      "3575448",
+      "3575542",
+      "3575589"
+    ],
+    "first_suspicious_txn_id": "3455711",
     "connected_card_ids": [],
     "connected_device_profiles": [],
-    "exposure_usd": 0,
+    "exposure_usd": 2393.43,
     "evidence": [
       {
         "claim": "Flagged amount $111.92 vs. this customer's prior average $124.71 (max $2529.78) over 2432 transactions before this alert",
@@ -32,152 +55,76 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($332.94 total) within -32893.6 minutes, 2016-12-16 16:31:48 to 2016-11-23 20:18:12. Transaction IDs: 3548470, 3481613, 3481781",
+        "claim": "Found 4 online transactions of similar size ($438.93 total) within 52.9 minutes, 2016-11-13 22:49:02 to 2016-11-13 23:41:55. Transaction IDs: 3455711, 3455761, 3455838, 3455893",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
-          "3548470",
-          "3481613",
-          "3481781"
+          "3455711",
+          "3455761",
+          "3455838",
+          "3455893"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($334.14 total) within -48667.3 minutes, 2016-12-17 18:31:40 to 2016-11-13 23:24:19. Transaction IDs: 3551713, 3549919, 3455838",
+        "claim": "Found 4 online transactions of similar size ($419.21 total) within 117.9 minutes, 2016-11-19 03:48:51 to 2016-11-19 05:46:44. Transaction IDs: 3469803, 3469877, 3469920, 3469923",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
-          "3551713",
-          "3549919",
-          "3455838"
+          "3469803",
+          "3469877",
+          "3469920",
+          "3469923"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($322.56 total) within -11203.8 minutes, 2016-11-27 14:05:33 to 2016-11-19 19:21:44. Transaction IDs: 3491420, 3490974, 3471143",
+        "claim": "Found 3 online transactions of similar size ($323.73 total) within 22.4 minutes, 2016-12-02 12:10:23 to 2016-12-02 12:32:50. Transaction IDs: 3506216, 3506241, 3506256",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
-          "3491420",
-          "3490974",
-          "3471143"
+          "3506216",
+          "3506241",
+          "3506256"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 5 online transactions of similar size ($538.80 total) within -76326.7 minutes, 2016-12-30 03:05:00 to 2016-11-07 02:58:20. Transaction IDs: 3585805, 3582922, 3520344, 3515752, 3437419",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3585805",
-          "3582922",
-          "3520344",
-          "3515752",
-          "3437419"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($333.04 total) within -51689.4 minutes, 2016-12-13 17:16:59 to 2016-11-07 19:47:35. Transaction IDs: 3539462, 3440519, 3439030",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3539462",
-          "3440519",
-          "3439030"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($324.98 total) within -38671.4 minutes, 2016-12-04 15:19:40 to 2016-11-07 18:48:15. Transaction IDs: 3513073, 3511937, 3438831",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3513073",
-          "3511937",
-          "3438831"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($312.81 total) within -51670.8 minutes, 2016-12-19 16:17:31 to 2016-11-13 19:06:42. Transaction IDs: 3556982, 3455893, 3455010",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3556982",
-          "3455893",
-          "3455010"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($328.90 total) within -63233.4 minutes, 2016-12-27 20:56:31 to 2016-11-13 23:03:08. Transaction IDs: 3579949, 3472560, 3455761",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3579949",
-          "3472560",
-          "3455761"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($322.73 total) within -55571.4 minutes, 2016-12-18 03:38:23 to 2016-11-09 13:27:00. Transaction IDs: 3553307, 3551668, 3443493",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3553307",
-          "3551668",
-          "3443493"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($332.80 total) within -50653.5 minutes, 2016-12-21 01:28:17 to 2016-11-15 21:14:45. Transaction IDs: 3561352, 3497647, 3460770",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3561352",
-          "3497647",
-          "3460770"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($321.99 total) within -72203.8 minutes, 2016-12-26 19:46:12 to 2016-11-06 16:22:26. Transaction IDs: 3577192, 3521093, 3435431",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3577192",
-          "3521093",
-          "3435431"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($332.90 total) within -53453.3 minutes, 2016-12-30 03:47:06 to 2016-11-23 00:53:49. Transaction IDs: 3585871, 3581953, 3480047",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3585871",
-          "3581953",
-          "3480047"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($313.02 total) within -37136.1 minutes, 2016-12-06 21:17:16 to 2016-11-11 02:21:12. Transaction IDs: 3520279, 3515709, 3448389",
+        "claim": "Found 3 online transactions of similar size ($342.96 total) within 41.4 minutes, 2016-12-06 21:17:16 to 2016-12-06 21:58:38. Transaction IDs: 3520279, 3520344, 3520430",
         "source": "graph",
         "ref": "tool:burst_scan",
         "entity_ids": [
           "3520279",
-          "3515709",
-          "3448389"
+          "3520344",
+          "3520430"
         ],
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount $111.92 is below the customer's prior average of $124.71 and well within their history of 2432 transactions.",
+        "claim": "Found 3 online transactions of similar size ($332.96 total) within 63.8 minutes, 2016-12-21 00:47:21 to 2016-12-21 01:51:11. Transaction IDs: 3561250, 3561352, 3561400",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3561250",
+          "3561352",
+          "3561400"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 4 online transactions of similar size ($423.72 total) within 99.0 minutes, 2016-12-25 23:44:14 to 2016-12-26 01:23:11. Transaction IDs: 3575345, 3575448, 3575542, 3575589",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3575345",
+          "3575448",
+          "3575542",
+          "3575589"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Real-time model scored transaction 3514948 at 0.87",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -186,7 +133,25 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 2221 prior transactions in billing region 264, showing long-term familiarity with the region since 2016-07-03.",
+        "claim": "Flagged amount $111.92 is below customer's prior average of $124.71",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3514948"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer has 2221 prior transactions in billing region 264 since 2016-07-03",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3514948"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Multiple clusters of online transactions of similar size found on various dates",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -196,7 +161,7 @@
       }
     ],
     "similar_prior_cases": [],
-    "summary": "none case on transaction 3514948 (exposure $111.92). Verdict: legitimate (p=0.10).",
+    "summary": "card_not_present_fraud case on transaction 3514948 plus 21 linked transaction(s) (exposure $2393.43). Verdict: uncertain (p=0.50).",
     "written_to_graph": true,
     "graph_case_id": "HHG-007"
   },
@@ -204,16 +169,26 @@
   "next_best_actions": {
     "initial": [
       {
-        "action": "ALLOW_TRANSACTION",
+        "action": "ESCALATE_TO_ANALYST",
         "route": "auto",
-        "reason": "Evidence supports a legitimate transaction"
+        "reason": "R8: verdict uncertain and exposure $2393.43 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
       }
     ],
     "final": [
       {
-        "action": "ALLOW_TRANSACTION",
+        "action": "ESCALATE_TO_ANALYST",
         "route": "auto",
-        "reason": "Evidence supports a legitimate transaction"
+        "reason": "R8: verdict uncertain and exposure $2393.43 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
       }
     ],
     "what_changed": "nothing"
@@ -226,8 +201,8 @@
     "total_amount_usd": 0,
     "activity_dates": []
   },
-  "stop_reason": "Stopped: prob_low_2ev.",
-  "tool_calls": 6,
-  "tokens": 2194,
-  "latency_s": 15.5
+  "stop_reason": "Stopped after the single evidence request; further steps unlikely to change the decision.",
+  "tool_calls": 48,
+  "tokens": 1771,
+  "latency_s": 28.4
 }

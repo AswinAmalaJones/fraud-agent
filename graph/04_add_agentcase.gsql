@@ -1,0 +1,51 @@
+USE GRAPH fraudGraph
+
+CREATE SCHEMA_CHANGE JOB add_agentcase FOR GRAPH fraudGraph {
+  ADD VERTEX AgentCase (
+    case_id STRING PRIMARY KEY,
+    customer_id STRING,
+    card_id STRING,
+    opened_at DATETIME,
+    created_at DATETIME,
+    status STRING,
+    verdict STRING,
+    fraud_probability DOUBLE,
+    pattern STRING,
+    pattern_description STRING,
+    exposure_usd DOUBLE,
+    summary STRING,
+    stop_reason STRING,
+    run_mode STRING,
+    sar_filed BOOL
+  );
+
+  ADD DIRECTED EDGE AGENT_ON_CUSTOMER (
+    FROM AgentCase,
+    TO Customer
+  ) WITH REVERSE_EDGE="AGENT_HAS_CASE";
+
+  ADD DIRECTED EDGE AGENT_ON_CARD (
+    FROM AgentCase,
+    TO Card
+  ) WITH REVERSE_EDGE="AGENT_CARD_CASES";
+
+  ADD DIRECTED EDGE AGENT_INVOLVES (
+    FROM AgentCase,
+    TO Transaction,
+    seq INT,
+    is_first BOOL
+  ) WITH REVERSE_EDGE="AGENT_INVOLVED_IN";
+
+  ADD DIRECTED EDGE AGENT_TOUCHES_DEVICE (
+    FROM AgentCase,
+    TO DeviceProfile,
+    n_txns INT
+  ) WITH REVERSE_EDGE="AGENT_DEVICE_TOUCHED_BY";
+
+  ADD DIRECTED EDGE AGENT_CONNECTED_TO (
+    FROM AgentCase,
+    TO Card
+  ) WITH REVERSE_EDGE="AGENT_CONNECTED_FROM";
+}
+
+RUN SCHEMA_CHANGE JOB add_agentcase

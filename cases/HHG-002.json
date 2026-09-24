@@ -25,16 +25,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged online transaction amount of $292.36 significantly exceeds the customer's prior average of $44.66 and prior maximum of $121.32.",
-        "source": "graph",
-        "ref": "llm:synthesis",
-        "entity_ids": [
-          "3478782"
-        ],
-        "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "Real-time risk model scored the transaction at 0.79.",
+        "claim": "Flagged amount $292.36 is substantially higher than the customer's prior average of $44.66 and prior max of $121.32.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -67,7 +58,7 @@
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R1: probability 0.60 on a single signal; confirm before any block"
+        "reason": "R1: probability 0.50 on a single signal; confirm before any block"
       },
       {
         "action": "CREATE_CASE",
@@ -87,7 +78,7 @@
         "reason": "R2: case opened for confirmed unauthorized activity"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.60 to 0.95."
+    "what_changed": "Simulated response (denied) changed probability from 0.50 to 0.95."
   },
   "sar": {
     "file": false,
@@ -99,6 +90,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 6,
-  "tokens": 1632,
-  "latency_s": 10.3
+  "tokens": 1571,
+  "latency_s": 5.5
 }

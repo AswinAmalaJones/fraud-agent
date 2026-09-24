@@ -69,7 +69,16 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile has been seen on 4 other customers within +/-30 days.",
+        "claim": "Customer has established history in billing region 330 with 85 prior transactions.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3523199"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile was also seen on 4 other customers within +/-30 days of this transaction.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -160,6 +169,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 9,
-  "tokens": 1926,
-  "latency_s": 12.9
+  "tokens": 2037,
+  "latency_s": 7.0
 }

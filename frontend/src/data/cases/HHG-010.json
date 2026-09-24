@@ -140,7 +140,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Real-time model scored transaction 3506725 ($1,000.03, online) at 0.90.",
+        "claim": "Real-time model scored transaction 3506725 at 0.90 risk score.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -149,7 +149,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $1,000.03 is significantly higher than the customer's prior average of $131.25 (max $670.04).",
+        "claim": "Flagged amount $1,000.03 is significantly higher than the customer's prior average of $131.25 and prior maximum of $670.04.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -167,7 +167,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Exact device profile is linked to 11 previously CONFIRMED FRAUD cases involving account_takeover, card_not_present_fraud, and card_not_present_new_device.",
+        "claim": "Exact device profile is linked to 11 previously CONFIRMED FRAUD cases involving patterns account_takeover, card_not_present_fraud, and card_not_present_new_device.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -259,6 +259,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 9,
-  "tokens": 2184,
-  "latency_s": 11.9
+  "tokens": 2138,
+  "latency_s": 7.3
 }

@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.95,
     "pattern": "undocumented",
-    "pattern_description": "Device profile is linked to 4 previously confirmed fraud cases with undocumented patterns and also seen on 27 other customers within +/-30 days.",
+    "pattern_description": "Device profile linked to 4 previously confirmed fraud cases with an undocumented pattern",
     "affected_txn_ids": [
       "3478561"
     ],
@@ -89,7 +89,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount $74.96 is close to the customer's prior average $58.13 (max $225.94) over 71 transactions.",
+        "claim": "Device profile also seen on 27 other customers within +/-30 days of this transaction",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -98,7 +98,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 36 prior transactions in billing region 191, first seen 2016-07-04 19:14:19.",
+        "claim": "This exact device profile is linked to 4 previously CONFIRMED FRAUD cases in the bank's closed-case history",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -107,16 +107,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile also seen on 27 other customers within +/-30 days of this transaction.",
-        "source": "graph",
-        "ref": "llm:synthesis",
-        "entity_ids": [
-          "3478561"
-        ],
-        "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "This exact device profile is linked to 4 previously CONFIRMED FRAUD cases in the bank's closed-case history (case IDs: CC-2649, CC-2971, CC-2985, CC-3035, pattern(s): undocumented).",
+        "claim": "Flagged amount $74.96 is close to the customer's prior average $58.13 and well within the max of $225.94",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -154,7 +145,7 @@
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R1: probability 0.90 not yet conclusive; verify first"
+        "reason": "R1: probability 0.95 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
@@ -184,7 +175,7 @@
         "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.90 to 0.95."
+    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.95."
   },
   "sar": {
     "file": true,
@@ -201,6 +192,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 9,
-  "tokens": 2131,
-  "latency_s": 20.8
+  "tokens": 2016,
+  "latency_s": 7.1
 }

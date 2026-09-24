@@ -7,14 +7,12 @@
     "pattern": "card_not_present_fraud",
     "pattern_description": "",
     "affected_txn_ids": [
-      "3567652",
-      "3553342",
-      "3492889"
+      "3553342"
     ],
-    "first_suspicious_txn_id": "3492889",
+    "first_suspicious_txn_id": "3553342",
     "connected_card_ids": [],
     "connected_device_profiles": [],
-    "exposure_usd": 86.81,
+    "exposure_usd": 30.91,
     "evidence": [
       {
         "claim": "Flagged amount $30.91 vs. this customer's prior average $82.36 (max $2681.01) over 913 transactions before this alert",
@@ -36,18 +34,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($86.81 total) within -36190.0 minutes, 2016-12-23 01:12:10 to 2016-11-27 22:02:08. Transaction IDs: 3567652, 3553342, 3492889",
-        "source": "graph",
-        "ref": "tool:burst_scan",
-        "entity_ids": [
-          "3567652",
-          "3553342",
-          "3492889"
-        ],
-        "epistemic_status": "FACT"
-      },
-      {
-        "claim": "Real-time model scored transaction 3553342 ($30.91) at 0.55.",
+        "claim": "Flagged amount $30.91 is below the customer's prior average of $82.36",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -56,7 +43,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $30.91 is lower than the customer's prior average of $82.36.",
+        "claim": "Customer has 21 prior transactions in billing region 494 starting from 2016-07-05",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -65,7 +52,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 21 prior transactions in billing region 494.",
+        "claim": "Real-time model scored the transaction at 0.55",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -82,14 +69,14 @@
       }
     ],
     "similar_prior_cases": [],
-    "summary": "card_not_present_fraud case on transaction 3553342 plus 2 linked transaction(s) (exposure $86.81). Verdict: fraud (p=0.90).",
+    "summary": "card_not_present_fraud case on transaction 3553342 (exposure $30.91). Verdict: fraud (p=0.90).",
     "written_to_graph": true,
     "graph_case_id": "HHG-012"
   },
   "evidence_requests": [
     {
       "type": "customer_validation",
-      "asked_after_step": 4,
+      "asked_after_step": 3,
       "assumed_response": "Customer states they did not make this $30.91 transaction and still has the card in their possession."
     }
   ],
@@ -129,7 +116,7 @@
     "activity_dates": []
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 11,
-  "tokens": 2021,
-  "latency_s": 23.7
+  "tool_calls": 7,
+  "tokens": 1744,
+  "latency_s": 6.5
 }
