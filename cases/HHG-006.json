@@ -219,7 +219,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer C07297 reported never making the $482.12 purchase (Refers to 3476682)",
+        "claim": "Customer C07297 reported never making the $482.12 purchase (txn 3476682).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -228,7 +228,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $482.12 is higher than the customer's prior average of $116.73, though below their historical max of $1104.00",
+        "claim": "The device profile is linked to 6 previously CONFIRMED FRAUD cases involving account takeover, card not present fraud, and card not present new device.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -237,7 +237,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile was also seen on 139 other customers within +/-30 days of this transaction",
+        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24 minutes (txns 3476602, 3476633, 3476665) around the time of the flagged transaction.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -246,16 +246,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Exact device profile is linked to 6 previously CONFIRMED FRAUD cases in the bank's closed-case history (CC-0781, CC-1476, CC-1960, CC-3368, CC-3624, CC-5111)",
-        "source": "graph",
-        "ref": "llm:synthesis",
-        "entity_ids": [
-          "3476682"
-        ],
-        "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes (Transaction IDs: 3476602, 3476633, 3476665)",
+        "claim": "The flagged amount of $482.12 is higher than the customer's prior average of $116.73, though within their historical max of $1104.00.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -295,7 +286,7 @@
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R1: probability 0.95 not yet conclusive; verify first"
+        "reason": "R1: probability 0.99 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
@@ -325,7 +316,7 @@
         "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.99."
+    "what_changed": "Simulated response (denied) changed probability from 0.99 to 0.99."
   },
   "sar": {
     "file": true,
@@ -342,6 +333,6 @@
   },
   "stop_reason": "Stopped: verification_settled.",
   "tool_calls": 15,
-  "tokens": 2526,
-  "latency_s": 22.2
+  "tokens": 2473,
+  "latency_s": 13.7
 }

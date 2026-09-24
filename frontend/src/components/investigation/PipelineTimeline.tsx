@@ -25,6 +25,7 @@ export const PipelineTimeline: React.FC<PipelineTimelineProps> = ({ caseRecord }
   const vt = getVerdictTheme(caseRecord.case.verdict);
   const factEvidence = caseRecord.case.evidence.filter((e) => e.epistemic_status === 'FACT');
   const simEvidence = caseRecord.evidence_requests;
+  const hasVerification = (simEvidence?.length || 0) > 0;
   const initialActions = caseRecord.next_best_actions.initial;
   const finalActions = caseRecord.next_best_actions.final;
 
@@ -158,7 +159,47 @@ export const PipelineTimeline: React.FC<PipelineTimelineProps> = ({ caseRecord }
     },
     {
       idx: 3,
-      title: '4. PATTERN DETECTION',
+      title: '4. CUSTOMER VERIFICATION',
+      subtitle: hasVerification
+        ? (simEvidence[0].type.replace(/_/g, ' ').toUpperCase())
+        : 'No Verification Needed',
+      icon: AlertTriangle,
+      color: '#F472B6',
+      content: (
+        <div>
+          {hasVerification ? (
+            <>
+              <div style={{ fontSize: '13px', fontWeight: '600', color: '#F8FAFC', marginBottom: '8px' }}>
+                Evidence Request: <strong>{simEvidence[0].type.replace(/_/g, ' ').toUpperCase()}</strong>{' '}
+                (requested after tool call #{simEvidence[0].asked_after_step})
+              </div>
+              <div style={{
+                padding: '12px',
+                backgroundColor: 'rgba(244, 114, 182, 0.08)',
+                border: '1px solid rgba(244, 114, 182, 0.25)',
+                borderRadius: '6px',
+                fontSize: '12px',
+                color: '#E2E8F0',
+                fontFamily: 'var(--font-mono)'
+              }}>
+                &quot;{simEvidence[0].assumed_response}&quot;
+              </div>
+              <div style={{ marginTop: '10px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                {caseRecord.next_best_actions.what_changed}
+              </div>
+            </>
+          ) : (
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              No customer or analyst verification was requested for this case &mdash; initial graph
+              evidence alone met the policy engine&apos;s confidence threshold.
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
+      idx: 4,
+      title: '5. PATTERN DETECTION',
       subtitle: caseRecord.case.pattern,
       icon: Fingerprint,
       color: '#38BDF8',
@@ -193,8 +234,8 @@ export const PipelineTimeline: React.FC<PipelineTimelineProps> = ({ caseRecord }
       )
     },
     {
-      idx: 4,
-      title: '5. POLICY DECISION',
+      idx: 5,
+      title: '6. POLICY DECISION',
       subtitle: `${initialActions.length} Initial &rarr; ${finalActions.length} Final Actions`,
       icon: ShieldCheck,
       color: '#10B981',
@@ -258,8 +299,8 @@ export const PipelineTimeline: React.FC<PipelineTimelineProps> = ({ caseRecord }
       )
     },
     {
-      idx: 5,
-      title: '6. FINAL ACTION & WRITE-BACK',
+      idx: 6,
+      title: '7. FINAL ACTION & WRITE-BACK',
       subtitle: caseRecord.sar.file ? 'SAR Filing Mandated' : 'Case Closed / Monitored',
       icon: CheckCircle2,
       color: caseRecord.case.verdict === 'fraud' ? '#EF4444' : '#10B981',
@@ -302,7 +343,7 @@ export const PipelineTimeline: React.FC<PipelineTimelineProps> = ({ caseRecord }
       {/* Stage Flow Nodes */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(6, 1fr)',
+        gridTemplateColumns: `repeat(${stages.length}, 1fr)`,
         gap: '8px',
         marginBottom: '16px'
       }}>

@@ -46,8 +46,10 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
   const isHHG014 = caseRecord.case_id === 'HHG-014';
   const vt = getVerdictTheme(caseRecord.case.verdict);
   const alert = caseRecord.alert_context;
+  const hasVerification = (caseRecord.evidence_requests?.length || 0) > 0;
+  const firstEvidenceRequest = caseRecord.evidence_requests?.[0];
 
-  // 6 Defined Forensic Stages matching the required pipeline
+  // 7 Defined Forensic Stages matching the required pipeline
   const stages = [
     {
       id: 'alert',
@@ -143,10 +145,36 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
       toolCitation: 'tools.device_signature_matches, tools.device_closed_case_history, tools.burst_scan'
     },
     {
-      id: 'pattern',
+      id: 'verification',
       stageNumber: 4,
+      title: 'Customer Verification',
+      badge: 'STAGE 4: CUSTOMER VERIFICATION',
+      icon: AlertTriangle,
+      color: '#F472B6',
+      stageTime: 2000,
+      simulatedProbability: caseRecord.case.fraud_probability,
+      simulatedExposure: caseRecord.case.exposure_usd,
+      simulatedToolCalls: 10,
+      summary: hasVerification
+        ? 'Policy engine requested additional evidence before finalizing the verdict; a seeded simulator returned the customer/analyst response below.'
+        : 'No additional verification was required -- graph evidence alone already satisfied the policy engine\'s confidence threshold.',
+      findings: hasVerification && firstEvidenceRequest ? [
+        { label: 'Evidence Request Type', value: firstEvidenceRequest.type.replace(/_/g, ' ').toUpperCase(), color: '#F472B6' },
+        { label: 'Requested After Tool Call', value: `#${firstEvidenceRequest.asked_after_step}`, color: '#CBD5E1' },
+        { label: 'Simulated Response', value: firstEvidenceRequest.assumed_response, color: '#E2E8F0', fullWidth: true },
+        { label: 'Probability Update', value: caseRecord.next_best_actions.what_changed, color: '#FBBF24', fullWidth: true }
+      ] : [
+        { label: 'Verification Status', value: 'No customer or analyst verification was requested for this case.', color: '#94A3B8', fullWidth: true },
+        { label: 'Reason', value: caseRecord.next_best_actions.what_changed || 'Initial graph evidence was sufficient to reach a final decision.', color: '#94A3B8', fullWidth: true }
+      ],
+      epistemicBadge: 'ASSUMPTION',
+      toolCitation: 'simulator.simulate_customer_validation / simulate_step_up_auth / simulate_analyst_info'
+    },
+    {
+      id: 'pattern',
+      stageNumber: 5,
       title: 'Pattern Detection & Model Convergence',
-      badge: 'STAGE 4: PATTERN DETECTION',
+      badge: 'STAGE 5: PATTERN DETECTION',
       icon: Fingerprint,
       color: '#38BDF8',
       stageTime: 1800,
@@ -165,9 +193,9 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
     },
     {
       id: 'policy',
-      stageNumber: 5,
+      stageNumber: 6,
       title: 'Deterministic Policy Evaluation',
-      badge: 'STAGE 5: POLICY DECISION',
+      badge: 'STAGE 6: POLICY DECISION',
       icon: ShieldCheck,
       color: '#10B981',
       stageTime: 2000,
@@ -186,9 +214,9 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
     },
     {
       id: 'action',
-      stageNumber: 6,
+      stageNumber: 7,
       title: 'Final Action & TigerGraph Write-Back',
-      badge: 'STAGE 6: FINAL ACTION',
+      badge: 'STAGE 7: FINAL ACTION',
       icon: CheckCircle2,
       color: caseRecord.case.verdict === 'fraud' ? '#EF4444' : '#10B981',
       stageTime: 2000,
@@ -354,7 +382,7 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
                 </span>
               </div>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Automated 10s step-by-step forensic reconstruction of the TigerGraph fraud agent
+                Automated step-by-step forensic reconstruction of the TigerGraph fraud agent
               </div>
             </div>
           </div>
@@ -401,7 +429,7 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
         {/* Stage Timeline Navigation Tabs */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
+          gridTemplateColumns: `repeat(${stages.length}, 1fr)`,
           backgroundColor: '#070A0F',
           borderBottom: '1px solid var(--border-subtle)'
         }}>
@@ -418,7 +446,7 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
                   padding: '10px 6px',
                   backgroundColor: isCurrent ? 'rgba(6, 182, 212, 0.12)' : (isPassed ? 'rgba(255,255,255,0.02)' : 'transparent'),
                   borderBottom: isCurrent ? `2px solid ${stg.color}` : '2px solid transparent',
-                  borderRight: i < 5 ? '1px solid var(--border-subtle)' : 'none',
+                  borderRight: i < stages.length - 1 ? '1px solid var(--border-subtle)' : 'none',
                   borderTop: 'none',
                   borderLeft: 'none',
                   display: 'flex',
@@ -620,30 +648,30 @@ export const InvestigationReplayModal: React.FC<InvestigationReplayModalProps> =
                 width: '110px',
                 height: '110px',
                 borderRadius: '50%',
-                backgroundColor: currentStageIdx >= 3 ? vt.bg : 'rgba(6, 182, 212, 0.1)',
-                border: `3px solid ${currentStageIdx >= 3 ? vt.color : '#06B6D4'}`,
+                backgroundColor: currentStageIdx >= 4 ? vt.bg : 'rgba(6, 182, 212, 0.1)',
+                border: `3px solid ${currentStageIdx >= 4 ? vt.color : '#06B6D4'}`,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: currentStageIdx >= 3 ? vt.glow : '0 0 15px rgba(6, 182, 212, 0.25)',
+                boxShadow: currentStageIdx >= 4 ? vt.glow : '0 0 15px rgba(6, 182, 212, 0.25)',
                 transition: 'all 0.3s ease'
               }}>
                 <div style={{
                   fontSize: '26px',
                   fontWeight: '900',
-                  color: currentStageIdx >= 3 ? vt.color : '#06B6D4',
+                  color: currentStageIdx >= 4 ? vt.color : '#06B6D4',
                   fontFamily: 'var(--font-mono)'
                 }}>
                   {formatPercent(currentStage.simulatedProbability)}
                 </div>
                 <div style={{ fontSize: '9px', fontWeight: '800', color: '#F8FAFC', marginTop: '2px' }}>
-                  {currentStageIdx >= 3 ? caseRecord.case.verdict.toUpperCase() : 'EVALUATING'}
+                  {currentStageIdx >= 4 ? caseRecord.case.verdict.toUpperCase() : 'EVALUATING'}
                 </div>
               </div>
 
               <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '14px', textAlign: 'center' }}>
-                {currentStageIdx >= 3 ? (
+                {currentStageIdx >= 4 ? (
                   <span>Satisfies <strong>Rule R1</strong> (High prob + 2 signals)</span>
                 ) : (
                   <span>Gathering independent graph signals...</span>
