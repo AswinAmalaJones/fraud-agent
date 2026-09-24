@@ -1,0 +1,121 @@
+{
+  "case_id": "HHG-015",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.55,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3464869"
+    ],
+    "first_suspicious_txn_id": "3464869",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050"
+    ],
+    "exposure_usd": 599.94,
+    "evidence": [
+      {
+        "claim": "Flagged amount $599.94 vs. this customer's prior average $132.61 (max $550.03) over 68 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C03042",
+          "3464869"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Billing region 327 has no prior history for this customer",
+        "source": "graph",
+        "ref": "tool:region_history",
+        "entity_ids": [
+          "C03042"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 1 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C03042",
+          "C05704"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Flagged amount $599.94 exceeds customer's prior average of $132.61 and previous max of $550.03",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3464869"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Billing region 327 has no prior history for this customer",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3464869"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile has been seen on 1 other customer within +/-30 days",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3464869"
+        ],
+        "epistemic_status": "INFERENCE"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "out_of_region_use case on transaction 3464869 (exposure $599.94). Verdict: uncertain (p=0.55).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-015"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $599.94 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
+      }
+    ],
+    "final": [
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $599.94 > $500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while escalated"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a: FILE_REPORT not recommended",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped after the single evidence request; further steps unlikely to change the decision.",
+  "tool_calls": 8,
+  "tokens": 830,
+  "latency_s": 7.9
+}

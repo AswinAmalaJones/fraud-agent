@@ -1,0 +1,264 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.99,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3506725"
+    ],
+    "first_suspicious_txn_id": "3506725",
+    "connected_card_ids": [
+      "C01155-K2",
+      "C03528-K1",
+      "C03738-K2",
+      "C04294-K1",
+      "C05245-K2",
+      "C05704-K2",
+      "C09280-K1",
+      "C10986-K2",
+      "C12961-K2",
+      "C12975-K2"
+    ],
+    "connected_device_profiles": [
+      "Windows | Windows 10 | edge 16.0 | 1366x768"
+    ],
+    "exposure_usd": 1000.03,
+    "evidence": [
+      {
+        "claim": "Flagged amount $1000.03 vs. this customer's prior average $131.25 (max $670.04) over 33 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C10434",
+          "3506725"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer has 24 prior transactions in billing region 469, first seen 2016-07-06 23:54:46",
+        "source": "graph",
+        "ref": "tool:region_history",
+        "entity_ids": [
+          "C10434"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 65 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C00750",
+          "C00854",
+          "C01688",
+          "C01999",
+          "C02079",
+          "C02231",
+          "C02250",
+          "C02280",
+          "C02285",
+          "C02377",
+          "C02716",
+          "C02848",
+          "C03036",
+          "C03066",
+          "C03169",
+          "C03218",
+          "C03285",
+          "C03343",
+          "C03533",
+          "C03714",
+          "C03738",
+          "C04024",
+          "C04108",
+          "C04190",
+          "C04265",
+          "C04269",
+          "C04860",
+          "C05244",
+          "C05508",
+          "C05625",
+          "C05814",
+          "C06070",
+          "C06224",
+          "C06308",
+          "C06818",
+          "C06914",
+          "C07185",
+          "C07212",
+          "C07338",
+          "C07518",
+          "C07552",
+          "C07745",
+          "C07780",
+          "C07925",
+          "C08269",
+          "C08489",
+          "C08918",
+          "C08989",
+          "C09065",
+          "C09165",
+          "C09241",
+          "C09249",
+          "C09363",
+          "C10149",
+          "C10308",
+          "C10434",
+          "C10507",
+          "C11000",
+          "C11143",
+          "C11309",
+          "C11381",
+          "C11709",
+          "C11929",
+          "C12690",
+          "C12897",
+          "C12961"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "This exact device profile is linked to 11 previously CONFIRMED FRAUD case(s) in the bank's closed-case history (case IDs: CC-2720, CC-3219, CC-3549, CC-3691, CC-3895, CC-3949, CC-3954, CC-4362, CC-4603, CC-4890, CC-5354, pattern(s): account_takeover, card_not_present_fraud, card_not_present_new_device)",
+        "source": "graph",
+        "ref": "tool:device_closed_case_history",
+        "entity_ids": [
+          "CC-2720",
+          "CC-3219",
+          "CC-3549",
+          "CC-3691",
+          "CC-3895",
+          "CC-3949",
+          "CC-3954",
+          "CC-4362",
+          "CC-4603",
+          "CC-4890",
+          "CC-5354"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Real-time model scored transaction 3506725 ($1,000.03, online) at 0.90.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Flagged amount $1,000.03 is significantly higher than the customer's prior average of $131.25 (max $670.04).",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile seen on 65 other customers within +/-30 days of this transaction.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Exact device profile is linked to 11 previously CONFIRMED FRAUD cases involving account_takeover, card_not_present_fraud, and card_not_present_new_device.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3506725"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $1000.03 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2720",
+      "CC-3219",
+      "CC-3549",
+      "CC-3691",
+      "CC-3895",
+      "CC-3949",
+      "CC-3954",
+      "CC-4362",
+      "CC-4603",
+      "CC-4890",
+      "CC-5354"
+    ],
+    "summary": "card_not_present_fraud case on transaction 3506725 (exposure $1000.03). Verdict: fraud (p=0.99).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-010"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 5,
+      "assumed_response": "Customer states they did not make this $1000.03 transaction and still has the card in their possession."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.90 not yet conclusive; verify first"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while evidence is requested"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device/region/email links other cards"
+      }
+    ],
+    "what_changed": "Simulated response (denied) changed probability from 0.90 to 0.99."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile",
+    "narrative": "On 2016-12-02, customer C10434 was affected by a $1000.03 card_not_present_fraud transaction (ID 3506725). Simulated customer contact recorded: Customer states they did not make this $1000.03 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C10434"
+    ],
+    "total_amount_usd": 1000.03,
+    "activity_dates": [
+      "2016-12-02",
+      "2016-12-02"
+    ]
+  },
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 9,
+  "tokens": 2184,
+  "latency_s": 11.9
+}

@@ -1,0 +1,104 @@
+{
+  "case_id": "HHG-002",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.95,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3478782"
+    ],
+    "first_suspicious_txn_id": "3478782",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 292.36,
+    "evidence": [
+      {
+        "claim": "Flagged amount $292.36 vs. this customer's prior average $44.66 (max $121.32) over 35 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C11891",
+          "3478782"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Flagged online transaction amount of $292.36 significantly exceeds the customer's prior average of $44.66 and prior maximum of $121.32.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3478782"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Real-time risk model scored the transaction at 0.79.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3478782"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $292.36 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "card_not_present_fraud case on transaction 3478782 (exposure $292.36). Verdict: fraud (p=0.95).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-002"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 2,
+      "assumed_response": "Customer states they did not make this $292.36 transaction and still has the card in their possession."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.60 on a single signal; confirm before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: case opened while evidence is requested"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      }
+    ],
+    "what_changed": "Simulated response (denied) changed probability from 0.60 to 0.95."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a: FILE_REPORT not recommended",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 6,
+  "tokens": 1632,
+  "latency_s": 10.3
+}

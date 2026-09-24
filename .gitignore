@@ -3,3 +3,4 @@
 data/
 staging/
 __pycache__/
+.vercel

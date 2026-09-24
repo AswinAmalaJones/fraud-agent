@@ -1,0 +1,330 @@
+{
+  "case_id": "HHG-011",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.85,
+    "pattern": "card_testing",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3583368",
+      "3582142",
+      "3578997",
+      "3515338",
+      "3535250",
+      "3535273",
+      "3498132",
+      "3526890",
+      "3515258",
+      "3515275",
+      "3526866",
+      "3526888",
+      "3502612",
+      "3535279",
+      "3526801",
+      "3526878",
+      "3520842",
+      "3550345",
+      "3515348",
+      "3515231",
+      "3567766",
+      "3511662",
+      "3511626",
+      "3535569",
+      "3535598",
+      "3535524",
+      "3546298",
+      "3535620",
+      "3497943",
+      "3497883",
+      "3565743",
+      "3545782",
+      "3541290",
+      "3524295",
+      "3535568",
+      "3535505",
+      "3535544",
+      "3567121",
+      "3500569",
+      "3498043"
+    ],
+    "first_suspicious_txn_id": "3497883",
+    "connected_card_ids": [],
+    "connected_device_profiles": [
+      "SM-G610F Build/NRD90M |  | chrome 66.0 for android | "
+    ],
+    "exposure_usd": 2355.83,
+    "evidence": [
+      {
+        "claim": "Flagged amount $131.30 vs. this customer's prior average $39.41 (max $486.52) over 10335 transactions before this alert",
+        "source": "graph",
+        "ref": "tool:customer_baseline",
+        "entity_ids": [
+          "C11923",
+          "3583368"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Device profile also seen on 3 other customer(s) within +/-30 days of this transaction",
+        "source": "graph",
+        "ref": "tool:device_signature_matches",
+        "entity_ids": [
+          "C03938",
+          "C05595",
+          "C05678",
+          "C11923"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($11.62 total) within -34057.9 minutes, 2016-12-28 19:13:13 to 2016-12-05 03:35:16. Transaction IDs: 3582142, 3578997, 3515338",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3582142",
+          "3578997",
+          "3515338"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($10.49 total) within -17588.0 minutes, 2016-12-12 00:58:46 to 2016-11-29 19:50:45. Transaction IDs: 3535250, 3535273, 3498132",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3535250",
+          "3535273",
+          "3498132"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($3.22 total) within -5776.6 minutes, 2016-12-09 03:14:10 to 2016-12-05 02:57:34. Transaction IDs: 3526890, 3515258, 3515275",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3526890",
+          "3515258",
+          "3515275"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($7.50 total) within -11542.2 minutes, 2016-12-09 03:00:36 to 2016-12-01 02:38:22. Transaction IDs: 3526866, 3526888, 3502612",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3526866",
+          "3526888",
+          "3502612"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 4 small online authorizations ($10.49 total) within -7270.0 minutes, 2016-12-12 01:10:49 to 2016-12-07 00:00:51. Transaction IDs: 3535279, 3526801, 3526878, 3520842",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3535279",
+          "3526801",
+          "3526878",
+          "3520842"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($8.13 total) within -17281.2 minutes, 2016-12-17 02:41:15 to 2016-12-05 02:40:04. Transaction IDs: 3550345, 3515348, 3515231",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3550345",
+          "3515348",
+          "3515231"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 small online authorizations ($12.91 total) within -27536.1 minutes, 2016-12-23 02:08:54 to 2016-12-03 23:12:48. Transaction IDs: 3567766, 3511662, 3511626",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3567766",
+          "3511662",
+          "3511626"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($371.40 total) within -22.8 minutes, 2016-12-12 03:38:00 to 2016-12-12 03:15:10. Transaction IDs: 3535569, 3535598, 3535524",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3535569",
+          "3535598",
+          "3535524"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 4 online transactions of similar size ($519.35 total) within -23141.9 minutes, 2016-12-15 20:12:55 to 2016-11-29 18:31:03. Transaction IDs: 3546298, 3535620, 3497943, 3497883",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3546298",
+          "3535620",
+          "3497943",
+          "3497883"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 4 online transactions of similar size ($499.95 total) within -20725.5 minutes, 2016-12-22 15:03:52 to 2016-12-08 05:38:19. Transaction IDs: 3565743, 3545782, 3541290, 3524295",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3565743",
+          "3545782",
+          "3541290",
+          "3524295"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($371.45 total) within -13.7 minutes, 2016-12-12 03:37:29 to 2016-12-12 03:23:46. Transaction IDs: 3535568, 3535505, 3535544",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3535568",
+          "3535505",
+          "3535544"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($398.02 total) within -33292.5 minutes, 2016-12-22 22:10:51 to 2016-11-29 19:18:20. Transaction IDs: 3567121, 3500569, 3498043",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3567121",
+          "3500569",
+          "3498043"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer C11923 explicitly reported never making the $131.30 purchase on flagged transaction 3583368.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3583368"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Flagged amount $131.30 is significantly higher than the customer's prior average of $39.41.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3583368"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "The device profile was also seen on 3 other customers within +/-30 days.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3583368"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Multiple small online authorizations and similar-sized online transactions are present in the evidence.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3583368"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Step-up authentication failed: no valid response to the one-time passcode.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "card_testing case on transaction 3583368 plus 39 linked transaction(s) (exposure $2355.83). Verdict: fraud (p=0.85).",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-011"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 15,
+      "assumed_response": "Step-up authentication failed: no valid response to the one-time passcode."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: card-testing sequence observed on this card"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: require step-up before further activity"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R5/3a: case opened for a card-testing episode"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device/region/email links other cards"
+      }
+    ],
+    "what_changed": "Simulated response (failed) changed probability from 0.85 to 0.85."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile",
+    "narrative": "On 2016-12-29, customer C11923 was affected by a card_testing episode totaling $2355.83 across 40 linked transactions (IDs: 3583368, 3582142, 3578997, 3515338, 3535250, 3535273, 3498132, 3526890, 3515258, 3515275, 3526866, 3526888, 3502612, 3535279, 3526801, 3526878, 3520842, 3550345, 3515348, 3515231, 3567766, 3511662, 3511626, 3535569, 3535598, 3535524, 3546298, 3535620, 3497943, 3497883, 3565743, 3545782, 3541290, 3524295, 3535568, 3535505, 3535544, 3567121, 3500569, 3498043). Simulated customer contact recorded: Step-up authentication failed: no valid response to the one-time passcode.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C11923"
+    ],
+    "total_amount_usd": 2355.83,
+    "activity_dates": [
+      "2016-12-29",
+      "2016-12-29"
+    ]
+  },
+  "stop_reason": "Stopped: prob_high_2ev.",
+  "tool_calls": 85,
+  "tokens": 2557,
+  "latency_s": 67.8
+}
