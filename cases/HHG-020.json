@@ -121,7 +121,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount of $125.08 is below the customer's prior average of $216.74.",
+        "claim": "Flagged amount $125.08 is below the customer's prior average of $216.74.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -130,7 +130,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has an established history of 83 prior transactions in billing region 264 since 2016-07-06.",
+        "claim": "Transaction is online (card-not-present).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -185,6 +185,11 @@
         "action": "CLOSE_NO_FRAUD",
         "route": "auto",
         "reason": "R3: customer confirmed the transaction"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: device profile shared with other cards; monitor regardless of this transaction's individual outcome"
       }
     ],
     "what_changed": "Simulated response (confirmed) changed probability from 0.52 to 0.00."
@@ -198,7 +203,7 @@
     "activity_dates": []
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 7,
-  "tokens": 1735,
-  "latency_s": 6.1
+  "tool_calls": 9,
+  "tokens": 1615,
+  "latency_s": 15.3
 }

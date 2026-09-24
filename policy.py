@@ -262,12 +262,23 @@ def recommend_initial_actions(ctx: DecisionContext) -> list[dict]:
             actions.append(build_action("CREATE_CASE", "3a: case opened while evidence is requested"))
         return actions
 
-    if ctx.fraud_probability >= STOP_HIGH and ctx.independent_evidence_count >= 2:
-        actions.append(build_action("BLOCK_CARD", "R1 satisfied: probability high with 2+ independent signals",
-                                     ctx.exposure_usd))
-        actions.append(build_action("CREATE_CASE", "3a: case opened for confirmed-strength fraud"))
+        if ctx.fraud_probability >= STOP_HIGH and ctx.independent_evidence_count >= 2:
+            actions.append(build_action("BLOCK_CARD", "R1 satisfied: probability high with 2+ independent signals", ctx.exposure_usd))
+            actions.append(build_action("CREATE_CASE", "3a: case opened for confirmed-strength fraud"))
         if ctx.shared_device:
             actions.append(build_action("MONITOR_CONNECTED_CARDS", "R6: shared device profile with other cards"))
+        sar_inputs = SarInputs(
+            fraud_confirmed_or_strong=True,
+            exposure_usd=ctx.exposure_usd,
+            shared_device_profile=ctx.shared_device,
+            shared_region_cluster=ctx.shared_region_cluster,
+            connects_to_other_customer_fraud=ctx.connects_to_other_customer_fraud,
+            pattern=ctx.pattern,
+            coordinated_abuse=ctx.coordinated_abuse,
+        )
+        file, criteria, reason = should_file_sar(sar_inputs)
+        if file:
+            actions.append(build_action("FILE_REPORT", f"3a: {reason}"))
         return actions
 
     actions.append(build_action("VERIFY_WITH_CUSTOMER",

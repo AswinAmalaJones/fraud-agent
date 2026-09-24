@@ -1,16 +1,21 @@
 {
   "case_id": "HHG-014",
   "case": {
-    "status": "open",
+    "status": "closed_fraud",
     "verdict": "fraud",
     "fraud_probability": 0.95,
     "pattern": "undocumented",
-    "pattern_description": "Device profile linked to 4 previously confirmed fraud cases with undocumented patterns",
+    "pattern_description": "Device profile is linked to 4 previously confirmed fraud cases with undocumented patterns and also seen on 27 other customers.",
     "affected_txn_ids": [
       "3478561"
     ],
     "first_suspicious_txn_id": "3478561",
-    "connected_card_ids": [],
+    "connected_card_ids": [
+      "C03528-K1",
+      "C06617-K1",
+      "C09733-K1",
+      "C09998-K1"
+    ],
     "connected_device_profiles": [
       "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
     ],
@@ -84,7 +89,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Transaction amount $74.96 is close to the customer's prior average of $58.13 and well below the max of $225.94.",
+        "claim": "Transaction amount of $74.96 is close to the customer's prior average of $58.13 and well below their maximum of $225.94.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -93,7 +98,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 36 prior transactions in billing region 191 since 2016-07-04.",
+        "claim": "Customer has 36 prior transactions in billing region 191 dating back to 2016-07-04.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -102,7 +107,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The device profile has been seen on 27 other customers within +/-30 days of this transaction.",
+        "claim": "Device profile seen on 27 other customers within +/-30 days of this transaction.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -111,13 +116,20 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The exact device profile is linked to 4 previously CONFIRMED FRAUD cases in the bank's closed-case history.",
+        "claim": "This exact device profile is linked to 4 previously CONFIRMED FRAUD cases in the bank's closed-case history.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
           "3478561"
         ],
         "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $74.96 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
       }
     ],
     "similar_prior_cases": [
@@ -130,54 +142,65 @@
     "written_to_graph": true,
     "graph_case_id": "HHG-014"
   },
-  "evidence_requests": [],
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 5,
+      "assumed_response": "Customer states they did not make this $74.96 transaction and still has the card in their possession."
+    }
+  ],
   "next_best_actions": {
     "initial": [
       {
-        "action": "BLOCK_CARD",
-        "route": "L1",
-        "reason": "R1 satisfied: probability high with 2+ independent signals"
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.95 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened for confirmed-strength fraud"
-      },
-      {
-        "action": "MONITOR_CONNECTED_CARDS",
-        "route": "auto",
-        "reason": "R6: shared device profile with other cards"
+        "reason": "3a: case opened while evidence is requested"
       }
     ],
     "final": [
       {
         "action": "BLOCK_CARD",
         "route": "L1",
-        "reason": "R1 satisfied: probability high with 2+ independent signals"
+        "reason": "R2: customer denied the transaction"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened for confirmed-strength fraud"
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile"
       },
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "R6: shared device profile with other cards"
+        "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "nothing"
+    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.95."
   },
   "sar": {
-    "file": false,
-    "reason": "3a: FILE_REPORT not recommended",
-    "narrative": "",
-    "subjects": [],
-    "total_amount_usd": 0,
-    "activity_dates": []
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile",
+    "narrative": "On 2016-11-22, customer C13487 was affected by a $74.96 undocumented transaction (ID 3478561). Simulated customer contact recorded: Customer states they did not make this $74.96 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C13487"
+    ],
+    "total_amount_usd": 74.96,
+    "activity_dates": [
+      "2016-11-22",
+      "2016-11-22"
+    ]
   },
-  "stop_reason": "Stopped: prob_high_2ev.",
-  "tool_calls": 8,
-  "tokens": 1057,
-  "latency_s": 28.2
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 9,
+  "tokens": 2167,
+  "latency_s": 11.3
 }

@@ -4,7 +4,7 @@
     "status": "escalated",
     "verdict": "uncertain",
     "fraud_probability": 0.55,
-    "pattern": "card_not_present_fraud",
+    "pattern": "out_of_region_use",
     "pattern_description": "",
     "affected_txn_ids": [
       "3464869"
@@ -46,7 +46,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount $599.94 exceeds customer's prior average of $132.61 and previous max of $550.03.",
+        "claim": "Flagged amount $599.94 exceeds customer's prior average of $132.61 and previous max of $550.03",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -55,7 +55,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Billing region 327 has no prior history for this customer.",
+        "claim": "Billing region 327 has no prior history for this customer",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -64,7 +64,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile has been seen on 1 other customer within +/-30 days.",
+        "claim": "Device profile has been seen on 1 other customer within +/-30 days",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -74,7 +74,7 @@
       }
     ],
     "similar_prior_cases": [],
-    "summary": "card_not_present_fraud case on transaction 3464869 (exposure $599.94). Verdict: uncertain (p=0.55).",
+    "summary": "out_of_region_use case on transaction 3464869 (exposure $599.94). Verdict: uncertain (p=0.55).",
     "written_to_graph": true,
     "graph_case_id": "HHG-015"
   },
@@ -115,7 +115,7 @@
     "activity_dates": []
   },
   "stop_reason": "Stopped after the single evidence request; further steps unlikely to change the decision.",
-  "tool_calls": 6,
-  "tokens": 866,
-  "latency_s": 4.3
+  "tool_calls": 8,
+  "tokens": 830,
+  "latency_s": 7.9
 }

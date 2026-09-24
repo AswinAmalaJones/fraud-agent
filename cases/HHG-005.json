@@ -1,18 +1,22 @@
 {
   "case_id": "HHG-005",
   "case": {
-    "status": "closed_legitimate",
-    "verdict": "legitimate",
-    "fraud_probability": 0.0,
-    "pattern": "none",
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.95,
+    "pattern": "card_not_present_new_device",
     "pattern_description": "",
-    "affected_txn_ids": [],
-    "first_suspicious_txn_id": "",
-    "connected_card_ids": [],
+    "affected_txn_ids": [
+      "3523199"
+    ],
+    "first_suspicious_txn_id": "3523199",
+    "connected_card_ids": [
+      "C05551-K2"
+    ],
     "connected_device_profiles": [
       "iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768"
     ],
-    "exposure_usd": 0,
+    "exposure_usd": 100.07,
     "evidence": [
       {
         "claim": "Flagged amount $100.07 vs. this customer's prior average $177.52 (max $1104.08) over 90 transactions before this alert",
@@ -47,7 +51,16 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Real-time model scored transaction 3523199 ($100.07, online) at 0.54.",
+        "claim": "This exact device profile is linked to 1 previously CONFIRMED FRAUD case(s) in the bank's closed-case history (case IDs: CC-1672, pattern(s): card_not_present_new_device)",
+        "source": "graph",
+        "ref": "tool:device_closed_case_history",
+        "entity_ids": [
+          "CC-1672"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Flagged online transaction amount of $100.07 is below customer's prior average of $177.52.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -56,7 +69,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $100.07 is below this customer's prior average of $177.52.",
+        "claim": "Device profile has been seen on 4 other customers within +/-30 days.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -65,7 +78,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has 85 prior transactions in billing region 330.",
+        "claim": "Exact device profile is linked to 1 previously CONFIRMED FRAUD case (CC-1672) with pattern card_not_present_new_device.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -74,32 +87,25 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile also seen on 4 other customer(s) within +/-30 days of this transaction.",
-        "source": "graph",
-        "ref": "llm:synthesis",
-        "entity_ids": [
-          "3523199"
-        ],
-        "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "Customer confirms they made this $100.07 purchase themselves.",
+        "claim": "Customer states they did not make this $100.07 transaction and still has the card in their possession.",
         "source": "customer",
         "ref": "evidence_request:1",
         "entity_ids": [],
         "epistemic_status": "ASSUMPTION"
       }
     ],
-    "similar_prior_cases": [],
-    "summary": "none case on transaction 3523199 (exposure $100.07). Verdict: legitimate (p=0.00).",
+    "similar_prior_cases": [
+      "CC-1672"
+    ],
+    "summary": "card_not_present_new_device case on transaction 3523199 (exposure $100.07). Verdict: fraud (p=0.95).",
     "written_to_graph": true,
     "graph_case_id": "HHG-005"
   },
   "evidence_requests": [
     {
       "type": "customer_validation",
-      "asked_after_step": 4,
-      "assumed_response": "Customer confirms they made this $100.07 purchase themselves."
+      "asked_after_step": 5,
+      "assumed_response": "Customer states they did not make this $100.07 transaction and still has the card in their possession."
     }
   ],
   "next_best_actions": {
@@ -107,7 +113,7 @@
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R1: probability 0.54 not yet conclusive; verify first"
+        "reason": "R1: probability 0.85 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
@@ -117,23 +123,43 @@
     ],
     "final": [
       {
-        "action": "CLOSE_NO_FRAUD",
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction"
+      },
+      {
+        "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "R3: customer confirmed the transaction"
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "Simulated response (confirmed) changed probability from 0.54 to 0.00."
+    "what_changed": "Simulated response (denied) changed probability from 0.85 to 0.95."
   },
   "sar": {
-    "file": false,
-    "reason": "3a: FILE_REPORT not recommended",
-    "narrative": "",
-    "subjects": [],
-    "total_amount_usd": 0,
-    "activity_dates": []
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile",
+    "narrative": "On 2016-12-07, customer C02923 was affected by a $100.07 card_not_present_new_device transaction (ID 3523199). Simulated customer contact recorded: Customer states they did not make this $100.07 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C02923"
+    ],
+    "total_amount_usd": 100.07,
+    "activity_dates": [
+      "2016-12-07",
+      "2016-12-07"
+    ]
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 7,
-  "tokens": 1717,
-  "latency_s": 6.2
+  "tool_calls": 9,
+  "tokens": 1926,
+  "latency_s": 12.9
 }

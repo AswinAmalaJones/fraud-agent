@@ -1,18 +1,39 @@
 {
   "case_id": "HHG-018",
   "case": {
-    "status": "closed_fraud",
-    "verdict": "fraud",
-    "fraud_probability": 0.85,
-    "pattern": "card_not_present_fraud",
-    "pattern_description": "",
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.5,
+    "pattern": "undocumented",
+    "pattern_description": "Customer reported an unauthorized $39.08 transaction, which is lower than their prior average of $141.23, but multiple groups of online transactions of similar size are present in the evidence.",
     "affected_txn_ids": [
-      "3491361"
+      "3491361",
+      "3540032",
+      "3539834",
+      "3422356",
+      "3556968",
+      "3556813",
+      "3449065",
+      "3566500",
+      "3462234",
+      "3416607",
+      "3562774",
+      "3562569",
+      "3454833",
+      "3541495",
+      "3476976",
+      "3419747",
+      "3513759",
+      "3513690",
+      "3444439",
+      "3527594",
+      "3527617",
+      "3453122"
     ],
     "first_suspicious_txn_id": "3491361",
     "connected_card_ids": [],
     "connected_device_profiles": [],
-    "exposure_usd": 39.08,
+    "exposure_usd": 822.09,
     "evidence": [
       {
         "claim": "Flagged amount $39.08 vs. this customer's prior average $141.23 (max $4438.01) over 5864 transactions before this alert",
@@ -34,7 +55,84 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer C02354 reported they never made the $39.08 purchase (txn 3491361).",
+        "claim": "Found 3 online transactions of similar size ($103.90 total) within -59286.4 minutes, 2016-12-13 19:52:04 to 2016-11-02 15:45:39. Transaction IDs: 3540032, 3539834, 3422356",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3540032",
+          "3539834",
+          "3422356"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($112.04 total) within -54816.1 minutes, 2016-12-19 16:11:39 to 2016-11-11 14:35:32. Transaction IDs: 3556968, 3556813, 3449065",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3556968",
+          "3556813",
+          "3449065"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($114.03 total) within -74811.1 minutes, 2016-12-22 19:11:05 to 2016-10-31 20:19:56. Transaction IDs: 3566500, 3462234, 3416607",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3566500",
+          "3462234",
+          "3416607"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($112.06 total) within -54617.4 minutes, 2016-12-21 16:23:15 to 2016-11-13 18:05:51. Transaction IDs: 3562774, 3562569, 3454833",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3562774",
+          "3562569",
+          "3454833"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($114.06 total) within -61116.8 minutes, 2016-12-14 06:08:46 to 2016-11-01 19:32:00. Transaction IDs: 3541495, 3476976, 3419747",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3541495",
+          "3476976",
+          "3419747"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($109.91 total) within -35993.3 minutes, 2016-12-04 18:38:25 to 2016-11-09 18:45:09. Transaction IDs: 3513759, 3513690, 3444439",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3513759",
+          "3513690",
+          "3444439"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($117.01 total) within -38406.6 minutes, 2016-12-09 15:13:38 to 2016-11-12 23:07:04. Transaction IDs: 3527594, 3527617, 3453122",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3527594",
+          "3527617",
+          "3453122"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer C02354 reported they never made the $39.08 purchase (transaction 3491361).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -43,7 +141,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $39.08 is significantly lower than the customer's prior average of $141.23.",
+        "claim": "The flagged amount of $39.08 is lower than the customer's prior average of $141.23.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -52,60 +150,47 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Customer has an extensive history of 5864 transactions (565 in billing region 126 since 2016).",
+        "claim": "Customer has 565 prior transactions in billing region 126, first seen 2016-07-02.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
           "3491361"
         ],
         "epistemic_status": "INFERENCE"
-      },
-      {
-        "claim": "Customer states they did not make this $39.08 transaction and still has the card in their possession.",
-        "source": "customer",
-        "ref": "evidence_request:1",
-        "entity_ids": [],
-        "epistemic_status": "ASSUMPTION"
       }
     ],
     "similar_prior_cases": [],
-    "summary": "card_not_present_fraud case on transaction 3491361 (exposure $39.08). Verdict: fraud (p=0.85).",
+    "summary": "undocumented case on transaction 3491361 plus 21 linked transaction(s) (exposure $822.09). Verdict: uncertain (p=0.50).",
     "written_to_graph": true,
     "graph_case_id": "HHG-018"
   },
-  "evidence_requests": [
-    {
-      "type": "customer_validation",
-      "asked_after_step": 3,
-      "assumed_response": "Customer states they did not make this $39.08 transaction and still has the card in their possession."
-    }
-  ],
+  "evidence_requests": [],
   "next_best_actions": {
     "initial": [
       {
-        "action": "VERIFY_WITH_CUSTOMER",
+        "action": "ESCALATE_TO_ANALYST",
         "route": "auto",
-        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+        "reason": "R8: verdict uncertain and exposure $822.09 > $500"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened while evidence is requested"
+        "reason": "3a: case opened while escalated"
       }
     ],
     "final": [
       {
-        "action": "BLOCK_CARD",
-        "route": "L1",
-        "reason": "R2: customer denied the transaction"
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $822.09 > $500"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "R2: case opened for confirmed unauthorized activity"
+        "reason": "3a: case opened while escalated"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.50 to 0.85."
+    "what_changed": "nothing"
   },
   "sar": {
     "file": false,
@@ -115,8 +200,8 @@
     "total_amount_usd": 0,
     "activity_dates": []
   },
-  "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 6,
-  "tokens": 1781,
-  "latency_s": 6.1
+  "stop_reason": "Stopped after the single evidence request; further steps unlikely to change the decision.",
+  "tool_calls": 48,
+  "tokens": 1871,
+  "latency_s": 62.6
 }

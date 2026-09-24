@@ -394,6 +394,9 @@ def run_case(conn, client, alert):
     device_has_prior_fraud = bool(
         facts.get("device_history") and facts["device_history"]["n_confirmed_fraud_cases"] > 0
     )
+    connected_card_ids = sorted(
+        set(facts["device_history"]["card_ids"]) - {alert.get("card_id", "")}
+    ) if device_has_prior_fraud else []
 
     initial_ids, initial_exposure = _validate_and_price_affected_ids(
         conn, counter, txn, assessment.get("affected_txn_ids", []), facts["known_txn_ids"],
@@ -527,11 +530,15 @@ def run_case(conn, client, alert):
             "activity_dates": [txn["ts"][:10], txn["ts"][:10]],
         }
 
-    status = "closed_legitimate" if final_assessment["verdict"] == "legitimate" else (
-        "closed_fraud" if customer_outcome == "denied" else
-        "escalated" if any(a["action"] == "ESCALATE_TO_ANALYST" for a in final_actions) else "open"
-    )
-
+    if any(a["action"] == "ESCALATE_TO_ANALYST" for a in final_actions):
+        status = "escalated"
+    elif final_assessment["verdict"] == "legitimate":
+        status = "closed_legitimate"
+    elif final_assessment["verdict"] == "fraud" and (customer_outcome == "denied" or should_stop):
+        status = "closed_fraud"
+    else:
+        status = "open"
+        
     result = {
         "case_id": alert["case_id"],
         "case": {
@@ -547,7 +554,7 @@ def run_case(conn, client, alert):
                 if final_assessment.get("first_suspicious_txn_id") in final_ids
                 else (final_ids[0] if final_ids else txn["transaction_id"])
             ),
-            "connected_card_ids": [],
+            "connected_card_ids": connected_card_ids,
             "connected_device_profiles": [txn["profile_key"]] if shared_device else [],
             "exposure_usd": 0 if final_assessment["verdict"] == "legitimate" else final_ctx.exposure_usd,
             "evidence": evidence_objs,

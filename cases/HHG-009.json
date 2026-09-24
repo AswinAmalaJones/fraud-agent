@@ -34,7 +34,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer C08299 reported 'I never made this $30.02 purchase. Please check my card.'",
+        "claim": "Customer C08299 reported never making the $30.02 purchase (Refers to 3581141).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -43,7 +43,16 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $30.02 is lower than the customer's prior average of $65.98 over 46 transactions.",
+        "claim": "Flagged amount $30.02 is below the customer's prior average of $65.98 (max $343.94) over 46 prior transactions.",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3581141"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer has 1 prior transaction in billing region 203, first seen 2016-07-27 23:01:57.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -107,7 +116,7 @@
     "activity_dates": []
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 6,
-  "tokens": 1746,
-  "latency_s": 6.2
+  "tool_calls": 7,
+  "tokens": 1661,
+  "latency_s": 9.1
 }

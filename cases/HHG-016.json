@@ -3,18 +3,29 @@
   "case": {
     "status": "closed_fraud",
     "verdict": "fraud",
-    "fraud_probability": 0.85,
-    "pattern": "card_not_present_new_device",
+    "fraud_probability": 0.99,
+    "pattern": "card_not_present_fraud",
     "pattern_description": "",
     "affected_txn_ids": [
-      "3534820"
+      "3534820",
+      "3554344",
+      "3571970"
     ],
-    "first_suspicious_txn_id": "3534820",
-    "connected_card_ids": [],
+    "first_suspicious_txn_id": "3571970",
+    "connected_card_ids": [
+      "C01521-K2",
+      "C03095-K2",
+      "C06899-K1",
+      "C07562-K2",
+      "C09791-K1",
+      "C10631-K1",
+      "C10837-K2",
+      "C12987-K1"
+    ],
     "connected_device_profiles": [
       "Windows |  | edge 16.0 | "
     ],
-    "exposure_usd": 59.67,
+    "exposure_usd": 163.68,
     "evidence": [
       {
         "claim": "Flagged amount $59.67 vs. this customer's prior average $39.80 (max $94.70) over 48 transactions before this alert",
@@ -105,7 +116,36 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer reported not making the $59.67 purchase (Refers to 3534820)",
+        "claim": "This exact device profile is linked to 10 previously CONFIRMED FRAUD case(s) in the bank's closed-case history (case IDs: CC-0497, CC-2540, CC-2675, CC-2694, CC-2732, CC-2765, CC-2898, CC-3491, CC-3580, CC-5057, pattern(s): card_not_present_fraud, card_not_present_new_device)",
+        "source": "graph",
+        "ref": "tool:device_closed_case_history",
+        "entity_ids": [
+          "CC-0497",
+          "CC-2540",
+          "CC-2675",
+          "CC-2694",
+          "CC-2732",
+          "CC-2765",
+          "CC-2898",
+          "CC-3491",
+          "CC-3580",
+          "CC-5057"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($163.68 total) within -18529.5 minutes, 2016-12-24 19:28:38 to 2016-12-11 22:39:08. Transaction IDs: 3571970, 3554344, 3534820",
+        "source": "graph",
+        "ref": "tool:burst_scan",
+        "entity_ids": [
+          "3571970",
+          "3554344",
+          "3534820"
+        ],
+        "epistemic_status": "FACT"
+      },
+      {
+        "claim": "Customer reported they never made the $59.67 purchase (transaction 3534820).",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -114,7 +154,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $59.67 is within the customer's prior range (average $39.80, max $94.70 over 48 transactions)",
+        "claim": "The exact device profile is linked to 10 previously CONFIRMED FRAUD cases in the bank's closed-case history.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -123,7 +163,16 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile also seen on 69 other customers within +/-30 days",
+        "claim": "Flagged amount of $59.67 is within the customer's historical range (prior average $39.80, max $94.70).",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3534820"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($163.68 total) within a specific timeframe involving transaction IDs 3571970, 3554344, and 3534820.",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -139,15 +188,26 @@
         "epistemic_status": "ASSUMPTION"
       }
     ],
-    "similar_prior_cases": [],
-    "summary": "card_not_present_new_device case on transaction 3534820 (exposure $59.67). Verdict: fraud (p=0.85).",
+    "similar_prior_cases": [
+      "CC-0497",
+      "CC-2540",
+      "CC-2675",
+      "CC-2694",
+      "CC-2732",
+      "CC-2765",
+      "CC-2898",
+      "CC-3491",
+      "CC-3580",
+      "CC-5057"
+    ],
+    "summary": "card_not_present_fraud case on transaction 3534820 plus 2 linked transaction(s) (exposure $163.68). Verdict: fraud (p=0.99).",
     "written_to_graph": true,
     "graph_case_id": "HHG-016"
   },
   "evidence_requests": [
     {
       "type": "customer_validation",
-      "asked_after_step": 3,
+      "asked_after_step": 5,
       "assumed_response": "Customer states they did not make this $59.67 transaction and still has the card in their possession."
     }
   ],
@@ -156,7 +216,7 @@
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R1: probability 0.50 not yet conclusive; verify first"
+        "reason": "R1: probability 0.99 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
@@ -186,23 +246,23 @@
         "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "Simulated response (denied) changed probability from 0.50 to 0.85."
+    "what_changed": "Simulated response (denied) changed probability from 0.99 to 0.99."
   },
   "sar": {
     "file": true,
     "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: shared_device_profile",
-    "narrative": "On 2016-12-11, customer C09988 was affected by a $59.67 card_not_present_new_device transaction (ID 3534820). Simulated customer contact recorded: Customer states they did not make this $59.67 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "narrative": "On 2016-12-11, customer C09988 was affected by a card_not_present_fraud episode totaling $163.68 across 3 linked transactions (IDs: 3534820, 3554344, 3571970). Simulated customer contact recorded: Customer states they did not make this $59.67 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
     "subjects": [
       "C09988"
     ],
-    "total_amount_usd": 59.67,
+    "total_amount_usd": 163.68,
     "activity_dates": [
       "2016-12-11",
       "2016-12-11"
     ]
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 6,
-  "tokens": 1697,
-  "latency_s": 6.8
+  "tool_calls": 12,
+  "tokens": 2352,
+  "latency_s": 17.8
 }

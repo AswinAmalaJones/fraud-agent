@@ -1,7 +1,7 @@
 {
   "case_id": "HHG-006",
   "case": {
-    "status": "open",
+    "status": "closed_fraud",
     "verdict": "fraud",
     "fraud_probability": 0.99,
     "pattern": "card_not_present_fraud",
@@ -13,7 +13,14 @@
       "3476665"
     ],
     "first_suspicious_txn_id": "3476602",
-    "connected_card_ids": [],
+    "connected_card_ids": [
+      "C03684-K1",
+      "C05704-K2",
+      "C09471-K2",
+      "C10158-K1",
+      "C10170-K1",
+      "C11269-K1"
+    ],
     "connected_device_profiles": [
       "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
     ],
@@ -212,7 +219,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Customer C07297 reported never making the $482.12 purchase (Refers to 3476682).",
+        "claim": "Customer C07297 reported never making the $482.12 purchase (Refers to 3476682)",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -221,7 +228,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "The device profile is linked to 6 previously CONFIRMED FRAUD cases in closed-case history (CC-0781, CC-1476, CC-1960, CC-3368, CC-3624, CC-5111) with patterns including account_takeover, card_not_present_fraud, and card_not_present_new_device.",
+        "claim": "Flagged amount $482.12 is higher than the customer's prior average of $116.73, though below their historical max of $1104.00",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -230,7 +237,7 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes (Transaction IDs: 3476602, 3476633, 3476665).",
+        "claim": "Device profile was also seen on 139 other customers within +/-30 days of this transaction",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -239,13 +246,29 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Flagged amount $482.12 is higher than the customer's prior average of $116.73, though within their historical max of $1104.00.",
+        "claim": "Exact device profile is linked to 6 previously CONFIRMED FRAUD cases in the bank's closed-case history (CC-0781, CC-1476, CC-1960, CC-3368, CC-3624, CC-5111)",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
           "3476682"
         ],
         "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Found 3 online transactions of similar size ($1423.95 total) within 24.0 minutes (Transaction IDs: 3476602, 3476633, 3476665)",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3476682"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer states they did not make this $482.12 transaction and still has the card in their possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [],
+        "epistemic_status": "ASSUMPTION"
       }
     ],
     "similar_prior_cases": [
@@ -260,54 +283,65 @@
     "written_to_graph": true,
     "graph_case_id": "HHG-006"
   },
-  "evidence_requests": [],
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer states they did not make this $482.12 transaction and still has the card in their possession."
+    }
+  ],
   "next_best_actions": {
     "initial": [
       {
-        "action": "BLOCK_CARD",
-        "route": "L1",
-        "reason": "R1 satisfied: probability high with 2+ independent signals"
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.95 not yet conclusive; verify first"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened for confirmed-strength fraud"
-      },
-      {
-        "action": "MONITOR_CONNECTED_CARDS",
-        "route": "auto",
-        "reason": "R6: shared device profile with other cards"
+        "reason": "3a: case opened while evidence is requested"
       }
     ],
     "final": [
       {
         "action": "BLOCK_CARD",
         "route": "L1",
-        "reason": "R1 satisfied: probability high with 2+ independent signals"
+        "reason": "R2: customer denied the transaction"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "3a: case opened for confirmed-strength fraud"
+        "reason": "R2: case opened for confirmed unauthorized activity"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile"
       },
       {
         "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "R6: shared device profile with other cards"
+        "reason": "R6: shared device/region/email links other cards"
       }
     ],
-    "what_changed": "nothing"
+    "what_changed": "Simulated response (denied) changed probability from 0.95 to 0.99."
   },
   "sar": {
-    "file": false,
-    "reason": "3a: FILE_REPORT not recommended",
-    "narrative": "",
-    "subjects": [],
-    "total_amount_usd": 0,
-    "activity_dates": []
+    "file": true,
+    "reason": "R2/3a: 3a: fraud confirmed/strongly suspected; criteria met: exposure_gt_1000, shared_device_profile",
+    "narrative": "On 2016-11-21, customer C07297 was affected by a card_not_present_fraud episode totaling $1906.07 across 4 linked transactions (IDs: 3476682, 3476602, 3476633, 3476665). Simulated customer contact recorded: Customer states they did not make this $482.12 transaction and still has the card in their possession.. Filed per Fraud Policy v1.0.",
+    "subjects": [
+      "C07297"
+    ],
+    "total_amount_usd": 1906.07,
+    "activity_dates": [
+      "2016-11-21",
+      "2016-11-21"
+    ]
   },
-  "stop_reason": "Stopped: prob_high_2ev.",
-  "tool_calls": 14,
-  "tokens": 1253,
-  "latency_s": 34.2
+  "stop_reason": "Stopped: verification_settled.",
+  "tool_calls": 15,
+  "tokens": 2526,
+  "latency_s": 22.2
 }

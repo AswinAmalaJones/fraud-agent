@@ -275,16 +275,18 @@ def device_closed_case_history(conn, profile_key):
       SumAccum<INT> @@n_cleared_cases;
       SetAccum<STRING> @@case_ids;
       SetAccum<STRING> @@patterns;
+      SetAccum<STRING> @@card_ids;
       P = {DeviceProfile.*};
       C = SELECT c FROM P:p -(DEVICE_TOUCHED_BY>:e)- ClosedCase:c
           WHERE p.profile_key == pkey
           ACCUM
             CASE WHEN c.outcome == "confirmed_fraud" THEN
-              @@n_confirmed_fraud_cases += 1, @@case_ids += c.case_id, @@patterns += c.pattern
+              @@n_confirmed_fraud_cases += 1, @@case_ids += c.case_id,
+              @@patterns += c.pattern, @@card_ids += c.card_id
             ELSE
               @@n_cleared_cases += 1
             END;
-      PRINT @@n_confirmed_fraud_cases, @@n_cleared_cases, @@case_ids, @@patterns;
+      PRINT @@n_confirmed_fraud_cases, @@n_cleared_cases, @@case_ids, @@patterns, @@card_ids;
     }
     """
     res = conn.runInterpretedQuery(query, params={"pkey": profile_key})
@@ -295,4 +297,5 @@ def device_closed_case_history(conn, profile_key):
         "n_cleared_cases": row.get("@@n_cleared_cases", 0),
         "case_ids": sorted(row.get("@@case_ids", [])),
         "patterns": sorted(row.get("@@patterns", [])),
+        "card_ids": sorted(row.get("@@card_ids", [])),
     }

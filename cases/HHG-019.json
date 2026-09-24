@@ -47,7 +47,7 @@
         "epistemic_status": "FACT"
       },
       {
-        "claim": "Flagged amount $99.92 is below customer's prior average $194.55.",
+        "claim": "Real-time model scored online transaction 3503878 of $99.92 at 0.90",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -56,7 +56,25 @@
         "epistemic_status": "INFERENCE"
       },
       {
-        "claim": "Device profile seen on 4 other customers within +/-30 days of this transaction.",
+        "claim": "Flagged amount $99.92 is below customer's prior average of $194.55 (max $1586.94)",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3503878"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Customer has 5 prior transactions in billing region 264 since 2016-07-11",
+        "source": "graph",
+        "ref": "llm:synthesis",
+        "entity_ids": [
+          "3503878"
+        ],
+        "epistemic_status": "INFERENCE"
+      },
+      {
+        "claim": "Device profile seen on 4 other customers within +/-30 days of this transaction",
         "source": "graph",
         "ref": "llm:synthesis",
         "entity_ids": [
@@ -102,6 +120,11 @@
         "action": "CLOSE_NO_FRAUD",
         "route": "auto",
         "reason": "R3: customer confirmed the transaction"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: device profile shared with other cards; monitor regardless of this transaction's individual outcome"
       }
     ],
     "what_changed": "Simulated response (confirmed) changed probability from 0.50 to 0.00."
@@ -115,7 +138,7 @@
     "activity_dates": []
   },
   "stop_reason": "Stopped: verification_settled.",
-  "tool_calls": 7,
-  "tokens": 1544,
-  "latency_s": 6.0
+  "tool_calls": 9,
+  "tokens": 1669,
+  "latency_s": 12.7
 }
